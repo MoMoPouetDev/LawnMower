@@ -77,14 +77,14 @@ void INIT_io() {
 	REG_PORT_DIRSET0 |= PORT_PA07 | PORT_PA12 | PORT_PA13;
 	REG_PORT_OUTCLR0 |= PORT_PA07 | PORT_PA12 | PORT_PA13;
 	PORT->Group[0].PINCFG[7].bit.PMUXEN = 1;
-	PORT->Group[0].PMUX[3].bit.PMUXO = PORT_PMUX_PMUXO_F;
+	PORT->Group[0].PMUX[3].bit.PMUXO = PORT_PMUX_PMUXO_E;
 	
 	/*** Moteur 2 ***/
 	// PWM -> PA16; PA20 PA21
 	REG_PORT_DIRSET0 |= PORT_PA16 | PORT_PA20 | PORT_PA21;
 	REG_PORT_OUTCLR0 |= PORT_PA16 | PORT_PA20 | PORT_PA21;
 	PORT->Group[0].PINCFG[16].bit.PMUXEN = 1;
-	PORT->Group[0].PMUX[8].bit.PMUXE = PORT_PMUX_PMUXE_F;
+	PORT->Group[0].PMUX[8].bit.PMUXE = PORT_PMUX_PMUXE_E;
 	
 	/*** Moteur Lame ***/
 	// PB10
@@ -138,5 +138,20 @@ void INIT_interrupt() {
 }
 
 void INIT_pwm() {
+	/* see help in
+	https://community.atmel.com/forum/sam-d21-problem-buffered-pwm-tcc?skey=sam%20d21%20CC[0]
+	*/
+	/***** Moteur 1 - Gauche *****/ 
+	GCLK->CLKCTRL.bit.ID = TCC1; // TCC1/WO[1]
+	TCC->CTRLA.bit.ENABLE = 1;
+	while(GCLK->STATUS.bit.SYNCBUSY);
+	TCC->WAVE.bit.DIR = 1; // Single Slope
+	TCC->WAVE.bit.POL1 = 1; // Clear on match
+	TCC->WAVEGEN.bit.NPWM = 1;
+	TCC->PER.reg = 100;
+	TCC->CC[1].reg = 0;
 	
+	/***** Moteur 2 - Droit *****/
+	GCLK->CLKCTRL.bit.ID = TCC2; // TCC2/WO[0]
+	while(GCLK->STATUS.bit.SYNCBUSY);
 }
