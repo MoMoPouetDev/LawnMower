@@ -145,56 +145,56 @@ void INIT_pwm() {
 	GCLK->CLKCTRL.bit.ID = TCC1; // TCC1/WO[1]
 	TCC1->CTRLA.bit.ENABLE = 1;
 	while(GCLK->STATUS.bit.SYNCBUSY);
-	TCC1->WAVE.bit.DIR = 1; // Single Slope
+	//TCC1->WAVE.bit.DIR = 1; // Single Slope
+	TCC1->WAVE.bit.WAVEGEN = 2;
 	TCC1->WAVE.bit.POL1 = 1; // Clear on match
-	TCC1->WAVEGEN.bit.NPWM = 1;
 	TCC1->PER.reg = 100;
 	TCC1->CC[1].reg = 0;
-	PM->APBCMASK.bit.TCC1 = 1;
+	PM->APBCMASK.bit.TCC1_ = 1;
 	
 	/***** Moteur 2 - Droit *****/
 	GCLK->CLKCTRL.bit.ID = TCC2; // TCC2/WO[0]
 	TCC1->CTRLA.bit.ENABLE = 1;
 	while(GCLK->STATUS.bit.SYNCBUSY);
-	TCC2->WAVE.bit.DIR = 1; // Single Slope
+	//TCC2->WAVE.bit.DIR = 1; // Single Slope
+	TCC2->WAVE.bit.WAVEGEN = 2;
 	TCC2->WAVE.bit.POL0 = 1; // Clear on match
-	TCC2->WAVEGEN.bit.NPWM = 1;
 	TCC2->PER.reg = 100;
 	TCC2->CC[0].reg = 0;
-	PM->APBCMASK.bit.TCC2 = 1;
+	PM->APBCMASK.bit.TCC2_ = 1;
 }
 
 void INIT_uart() {
 	/* see help in
 	https://www.avrfreaks.net/forum/no-asf-issue-samd21-lin-slave-implementation-uart-using-breaksync-detection
 	*/
-	PM->APBCMASK.bit.SERCOM2 = 1;
+	PM->APBCMASK.bit.SERCOM2_= 1;
 	GCLK->CLKCTRL.bit.ID = SERCOM2;
 	while(GCLK->STATUS.bit.SYNCBUSY);
 	
-	SERCOM2->CRTLA.bit.RXPO = 1;
-	SERCOM2->CRTLA.bit.TXPO = 0;
-	SERCOM2->CRTLA.bit.MODE = 1;
-	SERCOM2->CRTLB.bit.RXEN = 1;
-	SERCOM2->CRTLB.bit.TXEN = 1;
+	SERCOM2->USART.CTRLA.bit.RXPO = 1;
+	SERCOM2->USART.CTRLA.bit.TXPO = 0;
+	SERCOM2->USART.CTRLA.bit.MODE = 1;
+	SERCOM2->USART.CTRLB.bit.RXEN = 1;
+	SERCOM2->USART.CTRLB.bit.TXEN = 1;
 	SERCOM2->USART.BAUD.FRAC.FP   = (BAUDCONST8 % 8);
-    	SERCOM2->USART.BAUD.FRAC.BAUD = (BAUDCONST8 / 8);
-	SERCOM2->INTENSET.bit.RXS = 1;
+    SERCOM2->USART.BAUD.FRAC.BAUD = (BAUDCONST8 / 8);
+	SERCOM2->USART.INTENSET.bit.RXS = 1;
 	NVIC_EnableIRQ(SERCOM2_IRQn);
-	SERCOM2->CTRLA.bit.ENABLE = 1;
+	SERCOM2->USART.CTRLA.bit.ENABLE = 1;
 	
-	PM->APBCMASK.bit.SERCOM4 = 1;
+	PM->APBCMASK.bit.SERCOM4_ = 1;
 	GCLK->CLKCTRL.bit.ID = SERCOM4;
 	while(GCLK->STATUS.bit.SYNCBUSY);
 	
-	SERCOM4->CRTLA.bit.RXPO = 3;
-	SERCOM4->CRTLA.bit.TXPO = 1;
-	SERCOM4->CTRLA.bit.MODE = 1;
-	SERCOM4->CRTLB.bit.RXEN = 1;
-	SERCOM4->CRTLB.bit.TXEN = 1;
+	SERCOM4->USART.CTRLA.bit.RXPO = 3;
+	SERCOM4->USART.CTRLA.bit.TXPO = 1;
+	SERCOM4->USART.CTRLA.bit.MODE = 1;
+	SERCOM4->USART.CTRLB.bit.RXEN = 1;
+	SERCOM4->USART.CTRLB.bit.TXEN = 1;
 	SERCOM4->USART.BAUD.FRAC.FP   = (BAUDCONST8 % 8);
-    	SERCOM4->USART.BAUD.FRAC.BAUD = (BAUDCONST8 / 8);
-	SERCOM4->INTENSET.bit.RXS = 1;
+    SERCOM4->USART.BAUD.FRAC.BAUD = (BAUDCONST8 / 8);
+	SERCOM4->USART.INTENSET.bit.RXS = 1;
 	NVIC_EnableIRQ(SERCOM4_IRQn);
-	SERCOM4->CTRLA.bit.ENABLE = 1;
+	SERCOM4->USART.CTRLA.bit.ENABLE = 1;
 }
