@@ -143,15 +143,23 @@ void INIT_pwm() {
 	*/
 	/***** Moteur 1 - Gauche *****/ 
 	GCLK->CLKCTRL.bit.ID = TCC1; // TCC1/WO[1]
-	TCC->CTRLA.bit.ENABLE = 1;
+	TCC1->CTRLA.bit.ENABLE = 1;
 	while(GCLK->STATUS.bit.SYNCBUSY);
-	TCC->WAVE.bit.DIR = 1; // Single Slope
-	TCC->WAVE.bit.POL1 = 1; // Clear on match
-	TCC->WAVEGEN.bit.NPWM = 1;
-	TCC->PER.reg = 100;
-	TCC->CC[1].reg = 0;
+	TCC1->WAVE.bit.DIR = 1; // Single Slope
+	TCC1->WAVE.bit.POL1 = 1; // Clear on match
+	TCC1->WAVEGEN.bit.NPWM = 1;
+	TCC1->PER.reg = 100;
+	TCC1->CC[1].reg = 0;
+	PM->APBCMASK.bit.TCC1 = 1;
 	
 	/***** Moteur 2 - Droit *****/
 	GCLK->CLKCTRL.bit.ID = TCC2; // TCC2/WO[0]
+	TCC1->CTRLA.bit.ENABLE = 1;
 	while(GCLK->STATUS.bit.SYNCBUSY);
+	TCC2->WAVE.bit.DIR = 1; // Single Slope
+	TCC2->WAVE.bit.POL0 = 1; // Clear on match
+	TCC2->WAVEGEN.bit.NPWM = 1;
+	TCC2->PER.reg = 100;
+	TCC2->CC[0].reg = 0;
+	PM->APBCMASK.bit.TCC2 = 1;
 }
