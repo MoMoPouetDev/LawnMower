@@ -108,18 +108,18 @@ void INIT_io() {
 	
 	/*** UART ***/
 	/*** BLE ***/
-	//PA12 PA13
+	//PA12 PA13 SERCOM2
 	PORT->Group[0].PINCFG[12].bit.PMUXEN = 1;
 	PORT->Group[0].PMUX[6].bit.PMUXE = PORT_PMUX_PMUXE_C;
 	PORT->Group[0].PINCFG[13].bit.PMUXEN = 1;
 	PORT->Group[0].PMUX[6].bit.PMUXO = PORT_PMUX_PMUXO_C;
 	
 	/*** GPS ***/
-	//PA14 PA15
+	//PA14 PA15 SERCOM4
 	PORT->Group[0].PINCFG[14].bit.PMUXEN = 1;
-	PORT->Group[0].PMUX[7].bit.PMUXE = PORT_PMUX_PMUXE_C;
+	PORT->Group[0].PMUX[7].bit.PMUXE = PORT_PMUX_PMUXE_D;
 	PORT->Group[0].PINCFG[15].bit.PMUXEN = 1;
-	PORT->Group[0].PMUX[7].bit.PMUXO = PORT_PMUX_PMUXO_C;
+	PORT->Group[0].PMUX[7].bit.PMUXO = PORT_PMUX_PMUXO_D;
 		
 }
 
@@ -162,4 +162,39 @@ void INIT_pwm() {
 	TCC2->PER.reg = 100;
 	TCC2->CC[0].reg = 0;
 	PM->APBCMASK.bit.TCC2 = 1;
+}
+
+void INIT_uart() {
+	/* see help in
+	https://www.avrfreaks.net/forum/no-asf-issue-samd21-lin-slave-implementation-uart-using-breaksync-detection
+	*/
+	PM->APBCMASK.bit.SERCOM2 = 1;
+	GCLK->CLKCTRL.bit.ID = SERCOM2;
+	while(GCLK->STATUS.bit.SYNCBUSY);
+	
+	SERCOM2->CRTLA.bit.RXPO = 1;
+	SERCOM2->CRTLA.bit.TXPO = 0;
+	SERCOM2->CRTLA.bit.MODE = 1;
+	SERCOM2->CRTLB.bit.RXEN = 1;
+	SERCOM2->CRTLB.bit.TXEN = 1;
+	SERCOM2->USART.BAUD.FRAC.FP   = (BAUDCONST8 % 8);
+    	SERCOM2->USART.BAUD.FRAC.BAUD = (BAUDCONST8 / 8);
+	SERCOM2->INTENSET.bit.RXS = 1;
+	NVIC_EnableIRQ(SERCOM2_IRQn);
+	SERCOM2->CTRLA.bit.ENABLE = 1;
+	
+	PM->APBCMASK.bit.SERCOM4 = 1;
+	GCLK->CLKCTRL.bit.ID = SERCOM4;
+	while(GCLK->STATUS.bit.SYNCBUSY);
+	
+	SERCOM4->CRTLA.bit.RXPO = 3;
+	SERCOM4->CRTLA.bit.TXPO = 1;
+	SERCOM4->CTRLA.bit.MODE = 1;
+	SERCOM4->CRTLB.bit.RXEN = 1;
+	SERCOM4->CRTLB.bit.TXEN = 1;
+	SERCOM4->USART.BAUD.FRAC.FP   = (BAUDCONST8 % 8);
+    	SERCOM4->USART.BAUD.FRAC.BAUD = (BAUDCONST8 / 8);
+	SERCOM4->INTENSET.bit.RXS = 1;
+	NVIC_EnableIRQ(SERCOM4_IRQn);
+	SERCOM4->CTRLA.bit.ENABLE = 1;
 }
