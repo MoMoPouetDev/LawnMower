@@ -14,7 +14,7 @@ void Initialisation() {
 	INIT_variable();
 	INIT_pwm();
 	INIT_timer();
-	INIT_twi();
+	INIT_i2c();
 	INIT_uart();
 	INIT_adc();
 	INIT_wdt();
@@ -100,7 +100,7 @@ void INIT_io() {
 	PORT->Group[0].PINCFG[6].bit.INEN = 1;
 		
 	/*** I2C ***/
-	//PA08 PA09
+	//PA08 SDA PA09 SCL
 	PORT->Group[0].PINCFG[8].bit.PMUXEN = 1;
 	PORT->Group[0].PMUX[8].bit.PMUXE = PORT_PMUX_PMUXE_C;
 	PORT->Group[0].PINCFG[9].bit.PMUXEN = 1;
@@ -143,7 +143,6 @@ void INIT_pwm() {
 	*/
 	/***** Moteur 1 - Gauche *****/ 
 	GCLK->CLKCTRL.bit.ID = TCC1; // TCC1/WO[1]
-	TCC1->CTRLA.bit.ENABLE = 1;
 	while(GCLK->STATUS.bit.SYNCBUSY);
 	//TCC1->WAVE.bit.DIR = 1; // Single Slope
 	TCC1->WAVE.bit.WAVEGEN = 2;
@@ -151,10 +150,10 @@ void INIT_pwm() {
 	TCC1->PER.reg = 100;
 	TCC1->CC[1].reg = 0;
 	PM->APBCMASK.bit.TCC1_ = 1;
+	TCC1->CTRLA.bit.ENABLE = 1;
 	
 	/***** Moteur 2 - Droit *****/
 	GCLK->CLKCTRL.bit.ID = TCC2; // TCC2/WO[0]
-	TCC1->CTRLA.bit.ENABLE = 1;
 	while(GCLK->STATUS.bit.SYNCBUSY);
 	//TCC2->WAVE.bit.DIR = 1; // Single Slope
 	TCC2->WAVE.bit.WAVEGEN = 2;
@@ -162,6 +161,7 @@ void INIT_pwm() {
 	TCC2->PER.reg = 100;
 	TCC2->CC[0].reg = 0;
 	PM->APBCMASK.bit.TCC2_ = 1;
+	TCC2->CTRLA.bit.ENABLE = 1;
 }
 
 void INIT_uart() {
@@ -182,6 +182,7 @@ void INIT_uart() {
 	SERCOM2->USART.INTENSET.bit.RXS = 1;
 	NVIC_EnableIRQ(SERCOM2_IRQn);
 	SERCOM2->USART.CTRLA.bit.ENABLE = 1;
+	while(SERCOM2->USART.SYNCBUSY.bit.ENABLE);
 	
 	PM->APBCMASK.bit.SERCOM4_ = 1;
 	GCLK->CLKCTRL.bit.ID = SERCOM4;
@@ -197,4 +198,22 @@ void INIT_uart() {
 	SERCOM4->USART.INTENSET.bit.RXS = 1;
 	NVIC_EnableIRQ(SERCOM4_IRQn);
 	SERCOM4->USART.CTRLA.bit.ENABLE = 1;
+	while(SERCOM4->USART.SYNCBUSY.bit.ENABLE);
+}
+
+void INIT_i2c() {
+	/* see help in 
+	https://www.avrfreaks.net/sites/default/files/forum_attachments/Atmel-42631-SAM-D21-SERCOM-I2C-Configura.pdf
+	*/
+	PM->APBCMASK.bit.SERCOM0_ = 1;
+	GCLK->CLKCTRL.bit.ID = SERCOM0;
+	while(GCLK->STATUS.bit.SYNCBUSY);
+
+	SERCOM0->I2C.CTRLA.bit.SDAHOLD = 2;
+	SERCOM0->I2C.CTRLA.bit.MODE = 5;
+	SERCOM0->I2C.CTRLB.bit.SMEN = 1;
+	SERCOM0->I2C.CTRLA.bit.ENABLE = 1;
+	while(SERCOM0->I2C.SYNCBUSY.bit.ENABLE);
+	SERCOM0->STATUS.bit.BUSSTATE = 1;
+	while(SERCOM0->I2C.SYNCBUSY.bit.SYSOP);
 }
