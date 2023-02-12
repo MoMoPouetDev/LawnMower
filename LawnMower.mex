@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding= "UTF-8" ?>
-<configuration name="MIMXRT1061xxxxB" xsi:schemaLocation="http://mcuxpresso.nxp.com/XSD/mex_configuration_11 http://mcuxpresso.nxp.com/XSD/mex_configuration_11.xsd" uuid="c80538fe-0c4c-4aa5-b4a2-8207d72a015e" version="11" xmlns="http://mcuxpresso.nxp.com/XSD/mex_configuration_11" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<configuration name="MIMXRT1061xxxxB" xsi:schemaLocation="http://mcuxpresso.nxp.com/XSD/mex_configuration_12 http://mcuxpresso.nxp.com/XSD/mex_configuration_12.xsd" uuid="c80538fe-0c4c-4aa5-b4a2-8207d72a015e" version="12" xmlns="http://mcuxpresso.nxp.com/XSD/mex_configuration_12" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <common>
       <processor>MIMXRT1061xxxxA</processor>
       <package>MIMXRT1061CVL5A</package>
@@ -17,18 +17,18 @@
       <generate_registers_defines>false</generate_registers_defines>
    </preferences>
    <tools>
-      <pins name="Pins" version="11.0" enabled="true" update_project_code="true">
+      <pins name="Pins" version="13.0" enabled="true" update_project_code="true">
          <generated_project_files>
             <file path="board/pin_mux.c" update_enabled="true"/>
             <file path="board/pin_mux.h" update_enabled="true"/>
          </generated_project_files>
          <pins_profile>
-            <processor_version>11.0.1</processor_version>
-            <power_domains/>
+            <processor_version>13.0.1</processor_version>
             <pin_labels>
                <pin_label pin_num="M11" pin_signal="GPIO_AD_B0_02" label="USB_OTG1_PWR/J24[2]" identifier="SW_RIGHT"/>
                <pin_label pin_num="F14" pin_signal="GPIO_AD_B0_09" label="JTAG_TDI/J21[5]/ENET_RST/J22[5]/USER_LED" identifier="USER_LED"/>
             </pin_labels>
+            <power_domains/>
          </pins_profile>
          <functions_list>
             <function name="BOARD_InitPins">
@@ -45,17 +45,8 @@
                         <data>true</data>
                      </feature>
                   </dependency>
-                  <dependency resourceType="SWComponent" resourceId="platform.drivers.iomuxc" description="Pins initialization requires the IOMUXC Driver in the project." problem_level="2" source="Pins:BOARD_InitPins">
-                     <feature name="enabled" evaluation="equal" configuration="core0">
-                        <data>true</data>
-                     </feature>
-                  </dependency>
                </dependencies>
-               <pins>
-                  <pin peripheral="GPIO3" signal="gpio_io, 19" pin_num="C4" pin_signal="GPIO_EMC_33"/>
-                  <pin peripheral="GPIO5" signal="gpio_io, 01" pin_num="K7" pin_signal="PMIC_ON_REQ"/>
-                  <pin peripheral="GPIO3" signal="gpio_io, 05" pin_num="N3" pin_signal="GPIO_SD_B1_05"/>
-               </pins>
+               <pins/>
             </function>
             <function name="BOARD_InitI2C">
                <description>Configures pin routing and optionally pin electrical features.</description>
@@ -236,13 +227,13 @@
             </function>
          </functions_list>
       </pins>
-      <clocks name="Clocks" version="9.0" enabled="true" update_project_code="true">
+      <clocks name="Clocks" version="11.0" enabled="true" update_project_code="true">
          <generated_project_files>
             <file path="board/clock_config.c" update_enabled="true"/>
             <file path="board/clock_config.h" update_enabled="true"/>
          </generated_project_files>
          <clocks_profile>
-            <processor_version>11.0.1</processor_version>
+            <processor_version>13.0.1</processor_version>
          </clocks_profile>
          <clock_configurations>
             <clock_configuration name="BOARD_BootClockRUN" id_prefix="" prefix_user_defined="false">
@@ -415,13 +406,13 @@
          </dcdx_profile>
          <dcdx_configurations/>
       </dcdx>
-      <periphs name="Peripherals" version="11.0" enabled="true" update_project_code="true">
+      <periphs name="Peripherals" version="12.0" enabled="true" update_project_code="true">
          <generated_project_files>
             <file path="board/peripherals.c" update_enabled="true"/>
             <file path="board/peripherals.h" update_enabled="true"/>
          </generated_project_files>
          <peripherals_profile>
-            <processor_version>11.0.1</processor_version>
+            <processor_version>13.0.1</processor_version>
          </peripherals_profile>
          <functional_groups>
             <functional_group name="BOARD_InitPeripherals" uuid="c05fccc3-de7a-4675-ac38-eab9b93d53e0" called_from_default_init="true" id_prefix="" core="core0">

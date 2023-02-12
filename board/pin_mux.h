@@ -37,8 +37,6 @@ extern "C" {
  */
 void BOARD_InitBootPins(void);
 
-#define BOARD_INITPINS_IOMUXC_GPR_GPR28_GPIO_MUX3_GPIO_SEL_MASK 0x080020U /*!< GPIO3 and GPIO8 share same IO MUX function, GPIO_MUX3 selects one GPIO function: affected bits mask */
-
 /*!
  * @brief Configures pin routing and optionally pin electrical features.
  *

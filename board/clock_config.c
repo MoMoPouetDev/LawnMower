@@ -15,11 +15,11 @@
 
 /* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!GlobalInfo
-product: Clocks v9.0
+product: Clocks v11.0
 processor: MIMXRT1061xxxxA
 package_id: MIMXRT1061CVL5A
 mcu_data: ksdk2_0
-processor_version: 11.0.1
+processor_version: 13.0.1
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 
 #include "clock_config.h"
@@ -32,8 +32,6 @@ processor_version: 11.0.1
 /*******************************************************************************
  * Variables
  ******************************************************************************/
-/* System clock frequency. */
-extern uint32_t SystemCoreClock;
 
 /*******************************************************************************
  ************************ BOARD_InitBootClocks function ************************
