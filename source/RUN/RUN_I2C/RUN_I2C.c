@@ -1,18 +1,15 @@
 /*
- * RUN_Init.c
+ * RUN_I2C.c
  *
- *  Created on: 16 août 2022
+ *  Created on: 12 FEB 2023
  *      Author: morgan.venandy
  */
 
 /*--------------------------------------------------------------------------*/
 /*! ... INCLUDES ...                                                        */
 /*--------------------------------------------------------------------------*/
-#include "RUN_Task_Interface.h"
-#include "RUN_Init.h"
-#include "RUN_Timer.h"
-#include "RUN_ADC.h"
-#include "RUN_GPIO.h"
+#include "HAL_I2C.h"
+#include "RUN_I2C.h"
 
 /*--------------------------------------------------------------------------*/
 /* ... DATATYPES ...                                                        */
@@ -26,11 +23,7 @@
 /*--------------------------------------------------------------------------*/
 /*! ... FUNCTIONS DEFINITIONS    ...                                        */
 /*--------------------------------------------------------------------------*/
-void RUN_Init()
+void RUN_I2C_Init()
 {
-	RUN_Task_Interface_Init();
-	RUN_GPIO_Init();
-	RUN_Timer_Init();
-	RUN_ADC_Init();
-	RUN_INIT_I2C();
+	HAL_I2C_Init();
 }
