@@ -1,0 +1,5 @@
+{
+    "files.associations": {
+        "lld_gpio.h": "c"
+    }
+}
