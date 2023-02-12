@@ -12,20 +12,21 @@
 #include "RUN_Task.h"
 
 #include "FSM_Enum.h"
+#include "FSM_Dock.h"
 #include "FSM_Operative.h"
+#include "FSM_ReturnToBase.h"
+#include "FSM_Error.h"
 #include "FSM_Main.h"
 
 /*--------------------------------------------------------------------------*/
 /* ... DATAS TYPE ...                                                       */
 /*--------------------------------------------------------------------------*/
-S_SUP_FSM_STATE ge_FSM_Phase;
-S_ACU_FSM_STATE ge_FSM_Acu_State;
+S_MOWER_FSM_STATE ge_FSM_Phase;
 
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
-void FSM_Main_UpdateFsmAcu(void);
-void FSM_Main_CANReceive(void);
+void FSM_Main_UpdateFsmMower(void);
 /*---------------------------------------------------------------------------*/
 /* ... FUNCTIONS DEFINITIONS...                                              */
 /*---------------------------------------------------------------------------*/
@@ -40,15 +41,11 @@ void FSM_Main_CANReceive(void);
 void FSM_Main_Init( void )
 {
 	/*** FSM Init ***/
-	ge_FSM_Phase = PHASE_INITIALIZATION_INIT;
-	ge_FSM_Acu_State = S_ACU_OPERATIVE_Moving_KTG;
-	FSM_Main_UpdateFsmAcu();
-	//FSM_Init_Init();
-	//FSM_Calibration_Init();
-	//FSM_LoadingConso_Init();
-	//FSM_GettingReady_Init();
+	ge_FSM_Phase = FSM_Enum_GetFsmPhase();
+	FSM_Dock_Init();
 	FSM_Operative_Init();
-	/* ... */
+	FSM_ReturnToBase_Init();
+	FSM_Error_Init();
 
 	/*** RUN Init ***/
 	RUN_Init();
@@ -59,56 +56,35 @@ void FSM_Main( void )
    while(1)
    {
       /***************************************************************************************************************/
-      /*                                      MANAGE CAN FRAME                                                       */
+      /*                                      MANAGE GLOBALE CYCLE TASK FUNCTION                                     */
       /***************************************************************************************************************/
-	   FSM_Main_CANReceive();
 
       /***************************************************************************************************************/
       /*                                   FINITE STATE MACHINE                                                      */
       /***************************************************************************************************************/
 
 
-		if ( (ge_FSM_Acu_State >= PHASE_INITIALIZATION_INIT) && (ge_FSM_Acu_State <= PHASE_INITIALIZATION_WAITING_FOR_CALIBRATION))
+		if ( (ge_FSM_Phase >= PHASE_DOCK_INIT) && (ge_FSM_Phase <= PHASE_DOCK_WAITING_FOR_LEAVING_DOCK))
 		{
-			//FSM_Init( ge_FSM_PositioningSystem_State );
+			FSM_Dock( ge_FSM_Phase );
 		}
-		else if ( (ge_FSM_Acu_State >= PHASE_CALIBRATION_INIT) && (ge_FSM_Acu_State <= PHASE_CALIBRATION_WAITING_FOR_LOADING_CONSO) )
+		else if ( (ge_FSM_Phase >= PHASE_OPERATIVE_INIT) && (ge_FSM_Phase <= PHASE_OPERATIVE_WAITING_FOR_RETURN_TO_BASE) )
 		{
-			//FSM_Calibration( ge_FSM_PositioningSystem_State );
+			FSM_Operative( ge_FSM_Phase );
 		}
-		else if ( (ge_FSM_Acu_State >= PHASE_LOADING_CONSO_INIT) && (ge_FSM_Acu_State <= PHASE_LOADING_CONSO_WAITING_FOR_GETTING_READY) )
+		else if ( (ge_FSM_Phase >= PHASE_RETURN_TO_BASE_INIT) && (ge_FSM_Phase <= PHASE_RETURN_TO_BASE_WAITING_DOCKING) )
 		{
-			//FSM_LoadingConso( ge_FSM_PositioningSystem_State );
+			FSM_ReturnToBase( ge_FSM_Phase );
 		}
-		else if ( (ge_FSM_Acu_State >= PHASE_GETTING_READY_INIT) && (ge_FSM_Acu_State <= PHASE_GETTING_READY_WAITING_FOR_OPERATIVE) )
+		else if ( (ge_FSM_Phase >= PHASE_ERROR_INIT) && (ge_FSM_Phase <= PHASE_ERROR_INIT) )
 		{
-			//FSM_GettingReady( ge_FSM_PositioningSystem_State );
+			FSM_Error( ge_FSM_Phase );
 		}
-		else if ( (ge_FSM_Acu_State >= PHASE_OPERATIVE_INIT) && (ge_FSM_Acu_State <= PHASE_OPERATIVE_WAITING_FOR_UNLOADING_CONSO) )
-		{
-			FSM_Operative( ge_FSM_Acu_State);
-		}
-		else if ( (ge_FSM_Acu_State >= PHASE_UNLOADING_CONSO_INIT) && (ge_FSM_Acu_State <= PHASE_UNLOADING_CONSO_WAITING_FOR_SHUT_DOWN) )
-		{
-			//FSM_UnloadingConso( ge_FSM_PositioningSystem_State );
-		}
-		else if ( (ge_FSM_Acu_State >= PHASE_RESTART_INIT) && (ge_FSM_Acu_State <= PHASE_RESTART_WAITING_FOR_OPERATIVE) )
-		{
-			//FSM_Restart( ge_FSM_PositioningSystem_State );
-		}
-		FSM_Main_UpdateFsmAcu();
+		FSM_Main_UpdateFsmMower();
    }
 }
 
-void FSM_Main_UpdateFsmAcu()
+void FSM_Main_UpdateFsmMower()
 {
-	//S_FSM_Positioning_System_Modu_U.S_SUP_FSM = ge_FSM_Phase;
-	//S_FSM_Positioning_System_Modu_U.Tilting_angle_setpoint_deg = ge_Tilting;
-	//S_FSM_Positioning_System_Module_step();
-	//ge_FSM_Acu_State = S_FSM_Positioning_System_Modu_Y.S_POSITIONING_SYSTEM_FSM;
+	ge_FSM_Phase = FSM_Enum_GetFsmPhase();
 }
-
-void FSM_Main_CANReceive()
-{
-}
-
