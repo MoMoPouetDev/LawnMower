@@ -1,12 +1,12 @@
 /*
- * FSM_Operative.h
+ * FSM_Dock.h
  *
- *  Created on: 23 sept. 2022
+ *  Created on: 12 FEB 2023
  *      Author: morgan.venandy
  */
 
-#ifndef FSM_FSM_OPERATIVE_FSM_OPERATIVE_H_
-#define FSM_FSM_OPERATIVE_FSM_OPERATIVE_H_
+#ifndef FSM_FSM_DOCK_FSM_DOCK_H_
+#define FSM_FSM_DOCK_FSM_DOCK_H_
 
 /*--------------------------------------------------------------------------*/
 /*! ... INCLUDES ...                                                        */
@@ -17,7 +17,7 @@
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
-void FSM_Operative_Init();
-void FSM_Operative(S_MOWER_FSM_STATE e_FSM_Operative_State);
+void FSM_Dock_Init();
+void FSM_Dock(S_MOWER_FSM_STATE e_FSM_Operative_State);
 
-#endif /* FSM_FSM_OPERATIVE_FSM_OPERATIVE_H_ */
+#endif /* FSM_FSM_DOCK_FSM_DOCK_H_ */
