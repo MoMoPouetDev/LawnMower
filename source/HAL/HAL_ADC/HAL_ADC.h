@@ -22,6 +22,6 @@
 /*--------------------------------------------------------------------------*/
 void HAL_ADC_Init(void);
 void HAL_ADC_ReadValue(void);
-void HAL_ADC_GetAdcValue(uint32_t *pu32Etc0Adc1, uint32_t *pu32Etc1Adc1, uint32_t *pu32Etc0Adc2, uint32_t *pu32Etc1Adc2);
+void HAL_ADC_GetAdcValue(void);
 
 #endif /* HAL_HAL_ADC_HAL_ADC_H_ */

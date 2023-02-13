@@ -6,11 +6,11 @@
 /* clang-format off */
 /* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!GlobalInfo
-product: Peripherals v11.0
+product: Peripherals v12.0
 processor: MIMXRT1061xxxxA
 package_id: MIMXRT1061CVL5A
 mcu_data: ksdk2_0
-processor_version: 11.0.1
+processor_version: 13.0.1
 functionalGroups:
 - name: BOARD_InitPeripherals
   UUID: c05fccc3-de7a-4675-ac38-eab9b93d53e0

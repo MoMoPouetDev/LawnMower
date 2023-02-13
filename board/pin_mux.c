@@ -6,11 +6,11 @@
 /*
  * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!GlobalInfo
-product: Pins v11.0
+product: Pins v13.0
 processor: MIMXRT1061xxxxA
 package_id: MIMXRT1061CVL5A
 mcu_data: ksdk2_0
-processor_version: 11.0.1
+processor_version: 13.0.1
 pin_labels:
 - {pin_num: M11, pin_signal: GPIO_AD_B0_02, label: 'USB_OTG1_PWR/J24[2]', identifier: SW_RIGHT}
 - {pin_num: F14, pin_signal: GPIO_AD_B0_09, label: 'JTAG_TDI/J21[5]/ENET_RST/J22[5]/USER_LED', identifier: USER_LED}
@@ -28,7 +28,7 @@ pin_labels:
  * 
  * END ****************************************************************************************************************/
 void BOARD_InitBootPins(void) {
-    //BOARD_InitPins();
+    BOARD_InitPins();
     BOARD_InitI2C();
     BOARD_InitADC();
     BOARD_InitGPIO();
@@ -40,10 +40,7 @@ void BOARD_InitBootPins(void) {
  * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 BOARD_InitPins:
 - options: {callFromInitBoot: 'true', prefix: BOARD_, coreID: core0, enableClock: 'true'}
-- pin_list:
-  - {pin_num: C4, peripheral: GPIO3, signal: 'gpio_io, 19', pin_signal: GPIO_EMC_33}
-  - {pin_num: K7, peripheral: GPIO5, signal: 'gpio_io, 01', pin_signal: PMIC_ON_REQ}
-  - {pin_num: N3, peripheral: GPIO3, signal: 'gpio_io, 05', pin_signal: GPIO_SD_B1_05}
+- pin_list: []
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 
@@ -54,16 +51,6 @@ BOARD_InitPins:
  *
  * END ****************************************************************************************************************/
 void BOARD_InitPins(void) {
-  CLOCK_EnableClock(kCLOCK_Iomuxc);           
-  CLOCK_EnableClock(kCLOCK_IomuxcSnvs);       
-
-  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_33_GPIO3_IO19, 0U); 
-  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_05_GPIO3_IO05, 0U); 
-  IOMUXC_GPR->GPR28 = ((IOMUXC_GPR->GPR28 &
-    (~(BOARD_INITPINS_IOMUXC_GPR_GPR28_GPIO_MUX3_GPIO_SEL_MASK))) 
-      | IOMUXC_GPR_GPR28_GPIO_MUX3_GPIO_SEL(0x00U) 
-    );
-  IOMUXC_SetPinMux(IOMUXC_SNVS_PMIC_ON_REQ_GPIO5_IO01, 0U); 
 }
 
 
