@@ -1,18 +1,15 @@
 /*
- * RUN_Init.c
+ * RUN_UART.c
  *
- *  Created on: 16 août 2022
+ *  Created on: 19 FEB 2023
  *      Author: morgan.venandy
  */
 
 /*--------------------------------------------------------------------------*/
 /*! ... INCLUDES ...                                                        */
 /*--------------------------------------------------------------------------*/
-#include "RUN_Task_Interface.h"
-#include "RUN_Init.h"
-#include "RUN_Timer.h"
-#include "RUN_ADC.h"
-#include "RUN_GPIO.h"
+#include "HAL_UART.h"
+#include "RUN_UART.h"
 
 /*--------------------------------------------------------------------------*/
 /* ... DATATYPES ...                                                        */
@@ -26,12 +23,7 @@
 /*--------------------------------------------------------------------------*/
 /*! ... FUNCTIONS DEFINITIONS    ...                                        */
 /*--------------------------------------------------------------------------*/
-void RUN_Init()
+void RUN_UART_Init()
 {
-	RUN_Task_Interface_Init();
-	RUN_GPIO_Init();
-	RUN_Timer_Init();
-	RUN_ADC_Init();
-	RUN_I2C_Init();
-	RUN_UART_Init();
+	HAL_UART_Init();
 }

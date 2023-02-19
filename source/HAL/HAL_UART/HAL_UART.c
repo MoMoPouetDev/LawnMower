@@ -1,24 +1,24 @@
 /*
- * RUN_Init.c
+ * HAL_UART.c
  *
- *  Created on: 16 août 2022
+ *  Created on: 19 FEB 2023
  *      Author: morgan.venandy
  */
 
 /*--------------------------------------------------------------------------*/
 /*! ... INCLUDES ...                                                        */
 /*--------------------------------------------------------------------------*/
-#include "RUN_Task_Interface.h"
-#include "RUN_Init.h"
-#include "RUN_Timer.h"
-#include "RUN_ADC.h"
-#include "RUN_GPIO.h"
+#include "HAL_UART.h"
+#include "LLD_UART.h"
+
 
 /*--------------------------------------------------------------------------*/
 /* ... DATATYPES ...                                                        */
 /*--------------------------------------------------------------------------*/
+#define UART_BAUDRATE   9600U
 
-
+static volatile uint8_t gu8_FlagUart3;
+static volatile uint8_t gu8_FlagUart4;
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
@@ -26,12 +26,37 @@
 /*--------------------------------------------------------------------------*/
 /*! ... FUNCTIONS DEFINITIONS    ...                                        */
 /*--------------------------------------------------------------------------*/
-void RUN_Init()
+/**
+* @brief		UART callback
+* @param		e_Uart : UART number
+* @return		void
+* @details
+**/
+void HAL_UART_Callback(typ_Lld_Uart e_Uart)
 {
-	RUN_Task_Interface_Init();
-	RUN_GPIO_Init();
-	RUN_Timer_Init();
-	RUN_ADC_Init();
-	RUN_I2C_Init();
-	RUN_UART_Init();
+	if(e_Uart == LLD_UART_UART3)
+	{
+		gu8_FlagUart3 = 1;
+	}
+	if(e_Uart == LLD_UART_UART4)
+	{
+		gu8_FlagUart4 = 1;
+	}
+
+}
+
+void HAL_UART_Init()
+{
+	gu8_FlagUart3 = 0;
+	gu8_FlagUart4 = 0;
+
+	LLD_UART_Init(LLD_UART_UART3, UART_BAUDRATE, HAL_UART_Callback);
+	LLD_UART_Init(LLD_UART_UART4, UART_BAUDRATE, HAL_UART_Callback);
+}
+
+void HAL_UART_BleInit()
+{
+	char tc_commandAT[5] = {"AT", "AT+ROLE0", "AT+UUID0xFFE0", "AT+CHAR0xFFE1", "AT+NAMEMower"};
+
+	LLD_UART_Send(LLD_UART_UART4, tc_commandAT, 5);
 }
