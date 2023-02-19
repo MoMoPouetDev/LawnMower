@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "lld_gpio.h": "c",
-        "hal_adc.h": "c"
+        "hal_adc.h": "c",
+        "hal_i2c.h": "c",
+        "stdint.h": "c"
     }
 }

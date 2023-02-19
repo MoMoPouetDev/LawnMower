@@ -32,5 +32,5 @@ void RUN_Init()
 	RUN_GPIO_Init();
 	RUN_Timer_Init();
 	RUN_ADC_Init();
-	RUN_INIT_I2C();
+	RUN_I2C_Init();
 }
