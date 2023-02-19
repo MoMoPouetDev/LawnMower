@@ -3,6 +3,7 @@
         "lld_gpio.h": "c",
         "hal_adc.h": "c",
         "hal_i2c.h": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "hal_uart.h": "c"
     }
 }
