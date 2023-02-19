@@ -8,7 +8,11 @@
 #ifndef LLD_GPIO_H_
 #define LLD_GPIO_H_
 
+/*--------------------------------------------------------------------------*/
+/* ... INCLUDES ...                                                        */
+/*--------------------------------------------------------------------------*/
 #include "stdbool.h"
+#include "MIMXRT1061.h"
 /*--------------------------------------------------------------------------*/
 /* ... DATATYPES ...                                                        */
 /*--------------------------------------------------------------------------*/
@@ -76,11 +80,11 @@ typedef enum
 	LLD_GPIO_B1_07,			/* GPIO2_IN23 or GPIO7_IN23 */ // Motor 1 EN Backward
 	LLD_GPIO_B1_08,			/* GPIO2_IN24 or GPIO7_IN24 */ // Motor 2 EN Forward
 	LLD_GPIO_B1_09,			/* GPIO2_IN25 or GPIO7_IN25 */ // Motor 2 EN BackWard
-	LLD_GPIO_B1_10,			/* GPIO2_IN26 or GPIO7_IN26 */ // Echo Center
-	LLD_GPIO_B1_11,			/* GPIO2_IN27 or GPIO7_IN27 */ // Echo Left
+	LLD_GPIO_B1_10,			/* GPIO2_IN26 or GPIO7_IN26 */ // Echo Left
+	LLD_GPIO_B1_11,			/* GPIO2_IN27 or GPIO7_IN27 */ // Echo Center
 	LLD_GPIO_B1_12,			/* GPIO2_IN28 or GPIO7_IN28 */ // Echo Right
-	LLD_GPIO_B1_13,			/* GPIO2_IN29 or GPIO7_IN29 */ // Trig Center
-	LLD_GPIO_B1_14,			/* GPIO2_IN30 or GPIO7_IN30 */ // Trig Left
+	LLD_GPIO_B1_13,			/* GPIO2_IN29 or GPIO7_IN29 */ // Trig Left
+	LLD_GPIO_B1_14,			/* GPIO2_IN30 or GPIO7_IN30 */ // Trig Center
 	LLD_GPIO_B1_15,			/* GPIO2_IN31 or GPIO7_IN31 */ // Trig Right
 
 	LLD_GPIO_SD_B1_00,		/* GPIO3_IN00 or GPIO8_IN00 */
