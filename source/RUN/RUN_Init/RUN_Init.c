@@ -13,6 +13,8 @@
 #include "RUN_Timer.h"
 #include "RUN_ADC.h"
 #include "RUN_GPIO.h"
+#include "RUN_I2C.h"
+#include "RUN_UART.h"
 
 /*--------------------------------------------------------------------------*/
 /* ... DATATYPES ...                                                        */

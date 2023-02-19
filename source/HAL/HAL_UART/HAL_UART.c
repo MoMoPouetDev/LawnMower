@@ -56,7 +56,11 @@ void HAL_UART_Init()
 
 void HAL_UART_BleInit()
 {
-	char tc_commandAT[5] = {"AT", "AT+ROLE0", "AT+UUID0xFFE0", "AT+CHAR0xFFE1", "AT+NAMEMower"};
+	char commandAT[] = "AT",
+		commandRole[] = "AT+ROLE0",
+		commandUuid[] = "AT+UUID0xFFE0",
+		commandChar[] = "AT+CHAR0xFFE1",
+		commandName[] = "AT+NAMEMower";
 
-	LLD_UART_Send(LLD_UART_UART4, tc_commandAT, 5);
+	LLD_UART_Send(LLD_UART_UART4, commandAT, 2);
 }
