@@ -1,42 +1,36 @@
 /*
- * RUN_Init.c
+ * HAL_FIFO.h
  *
- *  Created on: 16 août 2022
+ *  Created on: 20 FEB 2023
  *      Author: morgan.venandy
  */
+
+#ifndef HAL_HAL_FIFO_HAL_FIFO_H_
+#define HAL_HAL_FIFO_HAL_FIFO_H_
 
 /*--------------------------------------------------------------------------*/
 /*! ... INCLUDES ...                                                        */
 /*--------------------------------------------------------------------------*/
-#include "RUN_Task_Interface.h"
-#include "RUN_Init.h"
-#include "RUN_Timer.h"
-#include "RUN_ADC.h"
-#include "RUN_GPIO.h"
-#include "RUN_I2C.h"
-#include "RUN_UART.h"
-#include "RUN_PWM.h"
-#include "RUN_FIFO.h"
+#include "stdint.h"
+
 /*--------------------------------------------------------------------------*/
 /* ... DATATYPES ...                                                        */
 /*--------------------------------------------------------------------------*/
+typedef struct Element Element;
+struct Element
+{
+	int value;
+	Element *nextElement;
+};
 
+typedef struct
+{
+	Element *firstElement;
+}Fifo;
 
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
+void HAL_FIFO_Init(void);
 
-/*--------------------------------------------------------------------------*/
-/*! ... FUNCTIONS DEFINITIONS    ...                                        */
-/*--------------------------------------------------------------------------*/
-void RUN_Init()
-{
-	RUN_Task_Interface_Init();
-	RUN_GPIO_Init();
-	RUN_Timer_Init();
-	RUN_ADC_Init();
-	RUN_I2C_Init();
-	RUN_UART_Init();
-	RUN_PWM_Init();
-	RUN_FIFO_Init();
-}
+#endif /* HAL_HAL_FIFO_HAL_FIFO_H_ */
