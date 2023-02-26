@@ -478,3 +478,8 @@ void HAL_GPS_rmcLatLong(DataNmea_RMC *pNmeaRmc) {
     _tLongitude.decimalB = (uint8_t)(decimalTemp >> 8);
     _tLongitude.decimalLSB = (uint8_t)(decimalTemp);
 }
+
+uint8_t HAL_GPS_GetHours()
+{
+    return _uHoursGpsAcquisition;
+}

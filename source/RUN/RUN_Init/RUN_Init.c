@@ -17,7 +17,7 @@
 #include "RUN_UART.h"
 #include "RUN_PWM.h"
 #include "RUN_FIFO.h"
-#include "RUN_GPS.h"
+#include "RUN_Sensors.h"
 /*--------------------------------------------------------------------------*/
 /* ... DATATYPES ...                                                        */
 /*--------------------------------------------------------------------------*/
@@ -40,5 +40,5 @@ void RUN_Init()
 	RUN_UART_Init();
 	RUN_PWM_Init();
 	RUN_FIFO_Init();
-	RUN_GPS_Init();
+	RUN_Sensors_Init();
 }

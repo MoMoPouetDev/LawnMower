@@ -77,9 +77,34 @@ typedef enum
     E_RIGHT_TRIGGER_SONAR_PIN           = 31
 }PIN;
 
+typedef enum {
+    UNKNOWN_ETAT = 0x00,
+    TACHE_EN_COURS = 0x01,
+    RETOUR_STATION = 0x02,
+    EN_CHARGE = 0x03,
+    PAS_DE_TACHE_EN_COURS = 0x04,
+    PAUSE = 0x05
+}EtatMower;
+
+typedef enum {
+    NTR = 0x10,
+    BLOCKED_MOWER = 0x20,
+    DETECTED_RAIN = 0x30,
+    WIRE_NOT_DETECTED = 0x40,
+    LOW_BATTERY = 0x50,
+    VERY_LOW_BATTERY = 0x60,
+    EMPTY_BATTERY = 0x70
+}ErrorMower;
+
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
 void HAL_GPIO_Init(void);
+void HAL_GPIO_UpdateLed(void);
+void HAL_GPIO_SetEtatMower(EtatMower);
+void HAL_GPIO_SetErrorMower(ErrorMower);
+void HAL_GPIO_WritePinSonar(uint8_t u8_sonarID, uint8_t u8_pinValue);
+uint8_t HAL_GPIO_GetEchoState(void);
+uint32_t HAL_GPIO_GetTimerValue(void);
 
 #endif /* HAL_HAL_GPIO_HAL_GPIO_H_ */

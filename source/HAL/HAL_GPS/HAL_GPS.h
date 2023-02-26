@@ -79,5 +79,6 @@ typedef struct {
 /*--------------------------------------------------------------------------*/
 void HAL_GPS_Init(void);
 void HAL_GPS_startGpsAcquisition(void);
+uint8_t HAL_GPS_GetHours(void);
 
 #endif /* HAL_HAL_GPS_HAL_GPS_H_ */
