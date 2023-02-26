@@ -28,11 +28,11 @@ const uint32_t cs_Etc1_Adc2[NB_CHANNEL_ETC1_ADC2] = { 9, 10, 11 };
 
 static uint8_t u8_flagIntEtc1;
 
-static uint8_t u8_adcValueLeftWire;
-static uint8_t u8_adcValueRightWire;
-static uint8_t u8_adcValueBattVolt;
-static uint8_t u8_adcValueBattAmp;
-static uint8_t u8_adcValueMotorAmp;
+static uint32_t u8_adcValueLeftWire;
+static uint32_t u8_adcValueRightWire;
+static uint32_t u8_adcValueBattVolt;
+static uint32_t u8_adcValueBattAmp;
+static uint32_t u8_adcValueMotorAmp;
 
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
@@ -89,7 +89,12 @@ void HAL_ADC_ReadValue()
 	}
 }
 
-void HAL_ADC_GetAdcValue()
+uint32_t HAL_ADC_GetChargeValue()
 {
+	return u8_adcValueBattAmp;
+}
 
+uint32_t HAL_ADC_GetBatteryValue()
+{
+	return u8_adcValueBattVolt;
 }

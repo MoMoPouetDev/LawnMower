@@ -1,28 +1,40 @@
 /*
- * HAL_ADC.h
+ * RUN_Sensors.h
  *
- *  Created on: 17 août 2022
+ *  Created on: 25 FEB 2023
  *      Author: morgan.venandy
  */
 
-#ifndef HAL_HAL_ADC_HAL_ADC_H_
-#define HAL_HAL_ADC_HAL_ADC_H_
+#ifndef RUN_RUN_SENSORS_RUN_SENSORS_H_
+#define RUN_RUN_SENSORS_RUN_SENSORS_H_
 
 /*--------------------------------------------------------------------------*/
 /*! ... INCLUDES ...                                                        */
 /*--------------------------------------------------------------------------*/
-#include <stdint.h>
+#include "stdint.h"
 
 /*--------------------------------------------------------------------------*/
 /* ... DATATYPES ...                                                        */
 /*--------------------------------------------------------------------------*/
+/*** Time to Mow ***/
+#define THRESHOLD_HOUR_MIN 7
+#define THRESHOLD_HOUR_MAX 18
+
+/*** Capteur Tension ***/
+#define CHARGING_THRESHOLD 600
+#define SENSOR_V_OK 80
+#define SENSOR_V_FAIBLE_WARN 20
+#define SENSOR_V_FAIBLE_ERR 10
+#define SENSOR_V_EMPTY 1
+
+#define ERROR_DATA 0xFF
 
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
-void HAL_ADC_Init(void);
-void HAL_ADC_ReadValue(void);
-uint32_t HAL_ADC_GetChargeValue(void);
-uint32_t HAL_ADC_GetBatteryValue(void);
+void RUN_Sensors_Init(void);
+uint8_t RUN_Sensors_IsTimeToMow(void);
+uint8_t RUN_Sensors_IsCharging(void);
+int8_t RUN_IsEnoughCharged(void);
 
-#endif /* HAL_HAL_ADC_HAL_ADC_H_ */
+#endif /* RUN_RUN_SENSORS_RUN_SENSORS_H_ */
