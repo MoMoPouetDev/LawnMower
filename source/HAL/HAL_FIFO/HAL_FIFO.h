@@ -32,5 +32,6 @@ typedef struct
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
 void HAL_FIFO_Init(void);
-
+int16_t HAL_FIFO_GetPitchAverage(int16_t s16_value);
+int16_t HAL_FIFO_GetRollAverage(int16_t s16_value);
 #endif /* HAL_HAL_FIFO_HAL_FIFO_H_ */

@@ -16,5 +16,12 @@
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
 void RUN_GPIO_Init(void);
+void RUN_GPIO_DisableAllMotor(void);
+void RUN_GPIO_SetEtatMowerInCharge(void);
+void RUN_GPIO_SetEtatMowerWaitingForMow(void);
+void RUN_GPIO_SetEtatMowerInTask(void);
+void RUN_GPIO_SetErrorMowerNtr(void);
+uint8_t RUN_GPIO_GetStartButton(void);
+void RUN_GPIO_ClearStartButton(void);
 
 #endif /* RUN_RUN_GPIO_RUN_GPIO_H_ */

@@ -1,46 +1,26 @@
 /*
- * RUN_Init.c
+ * RUN_Mower.h
  *
- *  Created on: 16 août 2022
+ *  Created on: 05 MAR 2023
  *      Author: morgan.venandy
  */
+
+#ifndef RUN_RUN_MOWER_RUN_MOWER_H_
+#define RUN_RUN_MOWER_RUN_MOWER_H_
 
 /*--------------------------------------------------------------------------*/
 /*! ... INCLUDES ...                                                        */
 /*--------------------------------------------------------------------------*/
-#include "RUN_Task_Interface.h"
-#include "RUN_Init.h"
-#include "RUN_Timer.h"
-#include "RUN_ADC.h"
-#include "RUN_GPIO.h"
-#include "RUN_I2C.h"
-#include "RUN_UART.h"
-#include "RUN_PWM.h"
-#include "RUN_FIFO.h"
-#include "RUN_Sensors.h"
-#include "RUN_Mower.h"
+#include "stdint.h"
+
 /*--------------------------------------------------------------------------*/
 /* ... DATATYPES ...                                                        */
 /*--------------------------------------------------------------------------*/
 
-
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
+void RUN_Mower_Init(void);
+void RUN_Mower_LeaveDockCharger(void);
 
-/*--------------------------------------------------------------------------*/
-/*! ... FUNCTIONS DEFINITIONS    ...                                        */
-/*--------------------------------------------------------------------------*/
-void RUN_Init()
-{
-	RUN_Task_Interface_Init();
-	RUN_GPIO_Init();
-	RUN_Timer_Init();
-	RUN_ADC_Init();
-	RUN_I2C_Init();
-	RUN_UART_Init();
-	RUN_PWM_Init();
-	RUN_FIFO_Init();
-	RUN_Sensors_Init();
-	RUN_Mower_Init();
-}
+#endif /* RUN_RUN_MOWER_RUN_MOWER_H_ */

@@ -1,46 +1,27 @@
 /*
- * RUN_Init.c
+ * HAL_Mower.h
  *
- *  Created on: 16 août 2022
+ *  Created on: 05 MAR 2023
  *      Author: morgan.venandy
  */
+
+#ifndef HAL_HAL_MOWER_HAL_MOWER_H_
+#define HAL_HAL_MOWER_HAL_MOWER_H_
 
 /*--------------------------------------------------------------------------*/
 /*! ... INCLUDES ...                                                        */
 /*--------------------------------------------------------------------------*/
-#include "RUN_Task_Interface.h"
-#include "RUN_Init.h"
-#include "RUN_Timer.h"
-#include "RUN_ADC.h"
-#include "RUN_GPIO.h"
-#include "RUN_I2C.h"
-#include "RUN_UART.h"
-#include "RUN_PWM.h"
-#include "RUN_FIFO.h"
-#include "RUN_Sensors.h"
-#include "RUN_Mower.h"
+#include "stdint.h"
+
 /*--------------------------------------------------------------------------*/
 /* ... DATATYPES ...                                                        */
 /*--------------------------------------------------------------------------*/
 
-
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
+void HAL_Mower_Init(void);
+int16_t HAL_Mower_GetAngleFromNorth(double d_pitch, double d_roll, uint8_t* pu8_rxBuffCompass, uint8_t* pu8_rxBuffCompassSize);
+void HAL_Mower_GetAnglePitchRoll(double* pd_pitch, double* pd_roll, uint8_t* pu8_rxBuffAccel, uint8_t* pu8_rxBuffAccelSize);
 
-/*--------------------------------------------------------------------------*/
-/*! ... FUNCTIONS DEFINITIONS    ...                                        */
-/*--------------------------------------------------------------------------*/
-void RUN_Init()
-{
-	RUN_Task_Interface_Init();
-	RUN_GPIO_Init();
-	RUN_Timer_Init();
-	RUN_ADC_Init();
-	RUN_I2C_Init();
-	RUN_UART_Init();
-	RUN_PWM_Init();
-	RUN_FIFO_Init();
-	RUN_Sensors_Init();
-	RUN_Mower_Init();
-}
+#endif /* HAL_HAL_MOWER_HAL_MOWER_H_ */
