@@ -19,12 +19,12 @@
 #define COMPASS_ADDR (0x1E<<1)
 #define ACCELEROMETRE_ADDR (0x53<<1)
 
-#define ADDR_DATA_COMPASS_X_LSB 0x04
 #define ADDR_DATA_COMPASS_X_MSB 0x03
-#define ADDR_DATA_COMPASS_Y_LSB 0x08
-#define ADDR_DATA_COMPASS_Y_MSB 0x07
-#define ADDR_DATA_COMPASS_Z_LSB 0x06
+#define ADDR_DATA_COMPASS_X_LSB 0x04
 #define ADDR_DATA_COMPASS_Z_MSB 0x05
+#define ADDR_DATA_COMPASS_Z_LSB 0x06
+#define ADDR_DATA_COMPASS_Y_MSB 0x07
+#define ADDR_DATA_COMPASS_Y_LSB 0x08
 
 #define ADDR_DATA_ACCELEROMETER_X_LSB 0x32
 #define ADDR_DATA_ACCELEROMETER_X_MSB 0x33
@@ -89,19 +89,53 @@ void HAL_I2C_Write()
 
 }
 
-uint8_t HAL_I2C_Read(uint8_t* pu8_RxBuff, uint8_t* pu8_Size)
+uint8_t HAL_I2C_ReadAccel(uint8_t* pu8_RxBuff, uint8_t* pu8_Size)
 {
 	static uint8_t u8_FlagReadSend = 0;
-	static uint8_t tu8_RxBuff[5] = {0};
+	static uint8_t tu8_RxBuff[6] = {0};
 	uint8_t u8_ReturnValue;
-	uint8_t u8_Size = 4;
+	uint8_t u8_Size = 46;
 	uint8_t i;
 
 	*pu8_Size = u8_Size;
 
 	if (!u8_FlagReadSend)
 	{
-		//LLD_I2C_Read(LLD_I2C_I2C1, TOUCH_PANEL_ADDR, TOUCH_X_POSITION_MSB, u8_Size, tu8_RxBuff, u8_Size);
+		LLD_I2C_Read(LLD_I2C_I2C1, ACCELEROMETRE_ADDR, ADDR_DATA_ACCELEROMETER_X_LSB, u8_Size, tu8_RxBuff, u8_Size);
+		u8_FlagReadSend = 1;
+		u8_ReturnValue = 0;
+	}
+	else if (gu8_FlagRx)
+	{
+		for(i = 0; i < u8_Size; i++)
+		{
+			pu8_RxBuff[i] = tu8_RxBuff[i];
+		}
+		gu8_FlagRx = 0;
+		u8_FlagReadSend = 0;
+		u8_ReturnValue = 1;
+	}
+	else
+	{
+		u8_ReturnValue = 0;
+	}
+
+	return u8_ReturnValue;
+}
+
+uint8_t HAL_I2C_ReadCompass(uint8_t* pu8_RxBuff, uint8_t* pu8_Size)
+{
+	static uint8_t u8_FlagReadSend = 0;
+	static uint8_t tu8_RxBuff[6] = {0};
+	uint8_t u8_ReturnValue;
+	uint8_t u8_Size = 6;
+	uint8_t i;
+
+	*pu8_Size = u8_Size;
+
+	if (!u8_FlagReadSend)
+	{
+		LLD_I2C_Read(LLD_I2C_I2C1, COMPASS_ADDR, ADDR_DATA_COMPASS_X_MSB, u8_Size, tu8_RxBuff, u8_Size);
 		u8_FlagReadSend = 1;
 		u8_ReturnValue = 0;
 	}
