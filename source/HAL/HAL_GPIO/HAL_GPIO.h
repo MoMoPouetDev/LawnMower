@@ -96,6 +96,21 @@ typedef enum {
     EMPTY_BATTERY = 0x70
 }ErrorMower;
 
+typedef enum
+{
+    ON, 
+	OFF
+}Etat;
+
+typedef enum
+{
+    STOP,
+	FORWARD,
+    BACKWARD,
+    LEFT,
+    RIGHT
+}MotorState;
+
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
@@ -106,5 +121,9 @@ void HAL_GPIO_SetErrorMower(ErrorMower);
 void HAL_GPIO_WritePinSonar(uint8_t u8_sonarID, uint8_t u8_pinValue);
 uint8_t HAL_GPIO_GetEchoState(void);
 uint32_t HAL_GPIO_GetTimerValue(void);
+void HAL_GPIO_UpdateBladeState(Etat e_bladeState);
+void HAL_GPIO_UpdateWheelState(MotorState e_wheelState);
+uint8_t HAL_GPIO_GetFlagButton(GPIO e_flagButton);
+void HAL_GPIO_ClearFlagButton(GPIO e_flagButton);
 
 #endif /* HAL_HAL_GPIO_HAL_GPIO_H_ */
