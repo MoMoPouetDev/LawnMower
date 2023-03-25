@@ -1,42 +1,26 @@
 /*
- * RUN_Sensors.h
+ * RUN_Mower.h
  *
- *  Created on: 25 FEB 2023
+ *  Created on: 05 MAR 2023
  *      Author: morgan.venandy
  */
 
-#ifndef RUN_RUN_SENSORS_RUN_SENSORS_H_
-#define RUN_RUN_SENSORS_RUN_SENSORS_H_
+#ifndef RUN_RUN_MOWER_RUN_MOWER_H_
+#define RUN_RUN_MOWER_RUN_MOWER_H_
 
 /*--------------------------------------------------------------------------*/
 /*! ... INCLUDES ...                                                        */
 /*--------------------------------------------------------------------------*/
 #include "stdint.h"
-#include "HAL_GPIO.h"
+
 /*--------------------------------------------------------------------------*/
 /* ... DATATYPES ...                                                        */
 /*--------------------------------------------------------------------------*/
-/*** Time to Mow ***/
-#define THRESHOLD_HOUR_MIN 7
-#define THRESHOLD_HOUR_MAX 18
-
-/*** Capteur Tension ***/
-#define CHARGING_THRESHOLD 600
-#define SENSOR_V_OK 80
-#define SENSOR_V_FAIBLE_WARN 20
-#define SENSOR_V_FAIBLE_ERR 10
-#define SENSOR_V_EMPTY 1
-
-#define ERROR_DATA 0xFF
 
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
-void RUN_Sensors_Init(void);
-uint8_t RUN_Sensors_IsTimeToMow(void);
-uint8_t RUN_Sensors_IsCharging(void);
-int8_t RUN_Sensors_IsEnoughCharged(void);
-Etat RUN_Sensors_GetRainState(void);
-void RUN_Sensors_SetRainState(Etat e_rainState);
+void RUN_Mower_Init(void);
+uint8_t RUN_Mower_LeaveDockCharger(void);
 
-#endif /* RUN_RUN_SENSORS_RUN_SENSORS_H_ */
+#endif /* RUN_RUN_MOWER_RUN_MOWER_H_ */

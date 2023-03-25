@@ -18,6 +18,7 @@
 #include "RUN_PWM.h"
 #include "RUN_FIFO.h"
 #include "RUN_Sensors.h"
+#include "RUN_Mower.h"
 /*--------------------------------------------------------------------------*/
 /* ... DATATYPES ...                                                        */
 /*--------------------------------------------------------------------------*/
@@ -41,4 +42,5 @@ void RUN_Init()
 	RUN_PWM_Init();
 	RUN_FIFO_Init();
 	RUN_Sensors_Init();
+	RUN_Mower_Init();
 }

@@ -16,5 +16,7 @@
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
 void RUN_PWM_Init(void);
+void RUN_PWM_Stop(void);
+void RUN_PWM_Backward(uint8_t u8_speed);
 
 #endif /* RUN_RUN_PWM_RUN_PWM_H_ */

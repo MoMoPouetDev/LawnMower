@@ -26,13 +26,13 @@ const uint32_t cs_Etc1_Adc1[NB_CHANNEL_ETC1_ADC1] = { 12, 13 };
 #define NB_CHANNEL_ETC1_ADC2		3
 const uint32_t cs_Etc1_Adc2[NB_CHANNEL_ETC1_ADC2] = { 9, 10, 11 };
 
-static uint8_t u8_flagIntEtc1;
+volatile static uint8_t gu8_flagIntEtc1;
 
-static uint32_t u8_adcValueLeftWire;
-static uint32_t u8_adcValueRightWire;
-static uint32_t u8_adcValueBattVolt;
-static uint32_t u8_adcValueBattAmp;
-static uint32_t u8_adcValueMotorAmp;
+static uint32_t gu8_adcValueLeftWire;
+static uint32_t gu8_adcValueRightWire;
+static uint32_t gu8_adcValueBattVolt;
+static uint32_t gu8_adcValueBattAmp;
+static uint32_t gu8_adcValueMotorAmp;
 
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
@@ -49,18 +49,18 @@ static uint32_t u8_adcValueMotorAmp;
 **/
 void callbackETC1(void)
 {
-	u8_flagIntEtc1 = 1;
+	gu8_flagIntEtc1 = 1;
 }
 
 void HAL_ADC_Init()
 {
-	u8_flagIntEtc1 = 0;
+	gu8_flagIntEtc1 = 0;
 
-	u8_adcValueLeftWire = 0;
-	u8_adcValueRightWire = 0;
-  	u8_adcValueBattVolt = 0;
-  	u8_adcValueBattAmp = 0;
-  	u8_adcValueMotorAmp = 0;
+	gu8_adcValueLeftWire = 0;
+	gu8_adcValueRightWire = 0;
+  	gu8_adcValueBattVolt = 0;
+  	gu8_adcValueBattAmp = 0;
+  	gu8_adcValueMotorAmp = 0;
 
     /* Test ADC */
 	LLD_ADC_Init(ADC_ETC_PIT1, cs_Etc1_Adc1, NB_CHANNEL_ETC1_ADC1, cs_Etc1_Adc2, NB_CHANNEL_ETC1_ADC2);
@@ -76,25 +76,30 @@ void HAL_ADC_Init()
 
 void HAL_ADC_ReadValue()
 {
-	if (u8_flagIntEtc1)
+	if (gu8_flagIntEtc1)
 	{
-		u8_adcValueLeftWire = LLD_ADC_ReadConversionValue(ADC_ETC_PIT1, ADC_ETC_ADC1, 0);
-		u8_adcValueRightWire = LLD_ADC_ReadConversionValue(ADC_ETC_PIT1, ADC_ETC_ADC1, 1);
+		gu8_adcValueLeftWire = LLD_ADC_ReadConversionValue(ADC_ETC_PIT1, ADC_ETC_ADC1, 0);
+		gu8_adcValueRightWire = LLD_ADC_ReadConversionValue(ADC_ETC_PIT1, ADC_ETC_ADC1, 1);
 
-		u8_adcValueBattVolt = LLD_ADC_ReadConversionValue(ADC_ETC_PIT1, ADC_ETC_ADC2, 0);
-		u8_adcValueBattAmp = LLD_ADC_ReadConversionValue(ADC_ETC_PIT1, ADC_ETC_ADC2, 1);
-		u8_adcValueMotorAmp = LLD_ADC_ReadConversionValue(ADC_ETC_PIT1, ADC_ETC_ADC2, 2);
+		gu8_adcValueBattVolt = LLD_ADC_ReadConversionValue(ADC_ETC_PIT1, ADC_ETC_ADC2, 0);
+		gu8_adcValueBattAmp = LLD_ADC_ReadConversionValue(ADC_ETC_PIT1, ADC_ETC_ADC2, 1);
+		gu8_adcValueMotorAmp = LLD_ADC_ReadConversionValue(ADC_ETC_PIT1, ADC_ETC_ADC2, 2);
 
-		u8_flagIntEtc1 = 0;
+		gu8_flagIntEtc1 = 0;
 	}
 }
 
 uint32_t HAL_ADC_GetChargeValue()
 {
-	return u8_adcValueBattAmp;
+	return gu8_adcValueBattAmp;
 }
 
 uint32_t HAL_ADC_GetBatteryValue()
 {
-	return u8_adcValueBattVolt;
+	return gu8_adcValueBattVolt;
+}
+
+uint32_t HAL_ADC_GetRightWireValue()
+{
+	return gu8_adcValueRightWire;
 }

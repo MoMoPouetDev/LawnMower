@@ -17,7 +17,7 @@
 /*--------------------------------------------------------------------------*/
 /* ... DATATYPES ...                                                        */
 /*--------------------------------------------------------------------------*/
-
+Etat ge_rain;
 
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
@@ -28,6 +28,8 @@ uint8_t RUN_Sensors_GetBatteryPercent(void);
 /*--------------------------------------------------------------------------*/
 void RUN_Sensors_Init()
 {
+	ge_rain = ON;
+
 	HAL_GPS_Init();
 	HAL_Sonar_Init();
 }
@@ -70,7 +72,7 @@ uint8_t RUN_Sensors_IsCharging()
 	return u8_returnValue;
 }
 
-int8_t RUN_IsEnoughCharged()
+int8_t RUN_Sensors_IsEnoughCharged()
 {
 	uint8_t battery = 0;
 	int8_t u8_returnValue = 0;
@@ -79,15 +81,22 @@ int8_t RUN_IsEnoughCharged()
 	
 	if (battery <= SENSOR_V_FAIBLE_WARN) {
 		if(battery <= SENSOR_V_FAIBLE_WARN)
+		{
 			HAL_GPIO_SetErrorMower(LOW_BATTERY);
+		}
 		else if (battery <= SENSOR_V_FAIBLE_ERR)
+		{
 			HAL_GPIO_SetErrorMower(VERY_LOW_BATTERY);
-		else if (battery <= SENSOR_V_EMPTY) {
+		}
+		else if (battery <= SENSOR_V_EMPTY) 
+		{
 			HAL_GPIO_SetErrorMower(EMPTY_BATTERY);
 			u8_returnValue = -1;
 		}
 		else
+		{
 			HAL_GPIO_SetErrorMower(VERY_LOW_BATTERY);
+		}
 		
 		u8_returnValue = 0;
 	}
@@ -142,4 +151,14 @@ uint8_t RUN_Sensors_GetBatteryPercent()
 	else if(uTension >= 509) { uPourcentage = 100; }
 	
 	return uPourcentage;
+}
+
+Etat RUN_Sensors_GetRainState()
+{
+	return ge_rain;
+}
+
+void RUN_Sensors_SetRainState(Etat e_rainState)
+{
+	ge_rain = e_rainState;
 }

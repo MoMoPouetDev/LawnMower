@@ -31,7 +31,7 @@ Fifo fifoRoll;
 void HAL_FIFO_InitList(Fifo *, int);
 void HAL_FIFO_AddElement(Fifo *, int);
 void HAL_FIFO_RemoveElement(Fifo *);
-int HAL_FIFO_GetAverage(Fifo *, int);
+int16_t HAL_FIFO_GetAverage(Fifo *list, int value);
 /*--------------------------------------------------------------------------*/
 /*! ... FUNCTIONS DEFINITIONS    ...                                        */
 /*--------------------------------------------------------------------------*/
@@ -93,8 +93,8 @@ void HAL_FIFO_RemoveElement(Fifo *list) {
 	free(removedElement);
 }
 
-int HAL_FIFO_GetAverage(Fifo *list, int value) {
-	int average = 0;
+int16_t HAL_FIFO_GetAverage(Fifo *list, int value) {
+	int16_t average = 0;
 	int count = 0;
 	
 	HAL_FIFO_AddElement(list, value);	
@@ -111,4 +111,22 @@ int HAL_FIFO_GetAverage(Fifo *list, int value) {
 	average = average / count;
 	
 	return average;
+}
+
+int16_t HAL_FIFO_GetPitchAverage(int16_t s16_value)
+{
+	int16_t s16_returnValue;
+
+	s16_returnValue = HAL_FIFO_GetAverage(&fifoPitch, s16_value);
+	
+	return s16_returnValue;
+}
+
+int16_t HAL_FIFO_GetRollAverage(int16_t s16_value)
+{
+	int16_t s16_returnValue;
+
+	s16_returnValue = HAL_FIFO_GetAverage(&fifoRoll, s16_value);
+	
+	return s16_returnValue;
 }
