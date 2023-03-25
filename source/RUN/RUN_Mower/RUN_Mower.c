@@ -44,7 +44,7 @@ void RUN_Mower_Init()
 	gu8_deltaAngle = DELTA_ANGLE;
 }
 
-void RUN_Mower_LeaveDockCharger()
+uint8_t RUN_Mower_LeaveDockCharger()
 {
 	static uint8_t _u8_leaveState = 0;
 	static uint8_t _tu8_rxBuffCompass[6] = {0};
@@ -62,9 +62,11 @@ void RUN_Mower_LeaveDockCharger()
 	uint32_t _u32_newGptValue = 0;
 	static double _d_pitch = 0;
 	static double _d_roll = 0;
+	uint8_t u8_returnValue = 0;
 
 	switch(_u8_leaveState)
    	{
+		default:
 	  	case 0:
 			_u16_randAngle = HAL_Mower_MyRandDeg(180);
 
@@ -153,14 +155,8 @@ void RUN_Mower_LeaveDockCharger()
 			break;
 
 		case 5 :
-
-			break;
-
-		case 6 :
-
-			break;
-
-		default:
+			u8_returnValue = 1;
 			break;
     }
+	return u8_returnValue;
 }
