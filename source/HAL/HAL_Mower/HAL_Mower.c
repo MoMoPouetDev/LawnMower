@@ -14,6 +14,7 @@
 #include "math.h"
 
 #include "HAL_FIFO.h"
+#include "HAL_GPIO.h"
 #include "HAL_Mower.h"
 
 /*--------------------------------------------------------------------------*/
@@ -32,6 +33,11 @@
 #define OFFSET_X ((CALIBRATION_X_MAX + CALIBRATION_X_MIN)/2)
 #define OFFSET_Y ((CALIBRATION_Y_MAX + CALIBRATION_Y_MIN)/2)
 #define OFFSET_Z ((CALIBRATION_Z_MAX + CALIBRATION_Z_MIN)/2)
+
+#define PITCH_MIN -30
+#define PITCH_MAX 30
+#define ROLL_MIN -30
+#define ROLL_MAX 30
 
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
@@ -121,4 +127,14 @@ void HAL_Mower_GetAnglePitchRoll(double* pd_pitch, double* pd_roll, uint8_t* pu8
 	
 	*pd_pitch = (double)HAL_FIFO_GetPitchAverage((int16_t)valuePitch);
 	*pd_roll = (double)HAL_FIFO_GetRollAverage((int16_t)valueRoll);
+}
+
+void HAL_Mower_TiltProtection(double d_pitch, double d_roll)
+{	
+	if((d_pitch <= PITCH_MIN) || (d_pitch >= PITCH_MAX) || (d_roll <= ROLL_MIN) || (d_roll >= ROLL_MAX)) { 
+		HAL_GPIO_UpdateBladeState(OFF);
+	}
+	else {
+		HAL_GPIO_UpdateBladeState(ON);
+	}
 }

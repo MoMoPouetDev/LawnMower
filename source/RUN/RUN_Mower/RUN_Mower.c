@@ -10,6 +10,7 @@
 /*--------------------------------------------------------------------------*/
 #include "stdint.h"
 #include "HAL_I2C.h"
+#include "HAL_FIFO.h"
 #include "HAL_Mower.h"
 #include "HAL_Timer.h"
 #include "RUN_PWM.h"
@@ -51,12 +52,12 @@ void RUN_Mower_LeaveDockCharger()
 	static uint8_t _tu8_rxBuffAccel[6] = {0};
 	static uint8_t _u8_rxBuffAccelSize = 0;
 	static uint8_t _u8_getAngleState = 0;
-	uint8_t _u8_flagI2c = 0;
+	uint8_t u8_flagI2c = 0;
 	static uint16_t _u16_randAngle = 0;
 	static uint16_t _u16_startAngle = 0;
 	static uint16_t _u16_currentAngle = 0;
 	static uint16_t _u16_endAngle = 0;
-	static uint16_t _u16_distanceWireRight = WIRE_DETECTION_UNLOAD;
+	uint32_t u32_distanceWireRight = WIRE_DETECTION_UNLOAD;
 	static uint32_t _u32_gptValue = 0;
 	uint32_t _u32_newGptValue = 0;
 	static double _d_pitch = 0;
@@ -70,9 +71,9 @@ void RUN_Mower_LeaveDockCharger()
 			break;
 
 		case 1:
-			_u8_flagI2c = HAL_I2C_ReadAccel(_tu8_rxBuffAccel, &_u8_rxBuffAccelSize);
+			u8_flagI2c = HAL_I2C_ReadAccel(_tu8_rxBuffAccel, &_u8_rxBuffAccelSize);
 
-			if (_u8_flagI2c)
+			if (u8_flagI2c)
 			{
 				HAL_Mower_GetAnglePitchRoll(&_d_pitch, &_d_roll, _tu8_rxBuffAccel, &_u8_rxBuffAccelSize);
 				_u8_leaveState = 2;
@@ -81,8 +82,8 @@ void RUN_Mower_LeaveDockCharger()
 			break;
 
 	  	case 2 :
-			_u8_flagI2c = HAL_I2C_ReadCompass(_tu8_rxBuffCompass, &_u8_rxBuffCompassSize);
-			if (_u8_flagI2c)
+			u8_flagI2c = HAL_I2C_ReadCompass(_tu8_rxBuffCompass, &_u8_rxBuffCompassSize);
+			if (u8_flagI2c)
 			{
 				_u16_startAngle = HAL_Mower_GetAngleFromNorth(_d_pitch, _d_roll, _tu8_rxBuffCompass, &_u8_rxBuffCompassSize);
 				_u16_endAngle = (_u16_startAngle + _u16_randAngle)%180;
@@ -115,22 +116,35 @@ void RUN_Mower_LeaveDockCharger()
 				{
 					default:
 					case 0 :
-						_u8_flagI2c = HAL_I2C_ReadAccel(_tu8_rxBuffAccel, &_u8_rxBuffAccelSize);
-						if (_u8_flagI2c)
+						u8_flagI2c = HAL_I2C_ReadAccel(_tu8_rxBuffAccel, &_u8_rxBuffAccelSize);
+						if (u8_flagI2c)
 						{
 							HAL_Mower_GetAnglePitchRoll(&_d_pitch, &_d_roll, _tu8_rxBuffAccel, &_u8_rxBuffAccelSize);
 							_u8_getAngleState = 1;
 						}
 
 						break;
-
 					case 1 :
-						_u8_flagI2c = HAL_I2C_ReadCompass(_tu8_rxBuffCompass, &_u8_rxBuffCompassSize);
-						if (_u8_flagI2c)
+						u8_flagI2c = HAL_I2C_ReadCompass(_tu8_rxBuffCompass, &_u8_rxBuffCompassSize);
+						if (u8_flagI2c)
 						{
 							_u16_currentAngle = MOWER_getAngleFromNorth(_d_pitch, _d_roll, _tu8_rxBuffCompass, &_u8_rxBuffCompassSize);
-							_u8_getAngleState = 0;
+							_u8_getAngleState = 2;
 						}
+
+						break;
+					case 2 :
+						HAL_Mower_TiltProtection(_d_pitch, _d_roll);
+						_u8_getAngleState = 3;
+
+						break;
+					case 3 :
+						u32_distanceWireRight = HAL_ADC_GetRightWireValue();
+						if (u32_distanceWireRight > WIRE_DETECTION_LIMITE)
+						{
+							_u8_leaveState = 5;
+						}
+						_u8_getAngleState = 0;
 
 						break;
 				}
