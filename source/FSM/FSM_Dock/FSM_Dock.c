@@ -21,6 +21,7 @@
 /* ... DATAS TYPE ...                                                       */
 /*--------------------------------------------------------------------------*/
 uint8_t gu8_isCharging;
+uint8_t gu8_leavingDockState;
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
@@ -33,11 +34,12 @@ void FSM_Dock_DisableAllMotor(void);
 void FSM_Dock_Init()
 {
 	gu8_isCharging = 0;
+	gu8_isCharging = 0;
 }
 
 void FSM_Dock(S_MOWER_FSM_STATE e_FSM_Dock_State)
 {
-	uint32_t u32_CyclicTask;
+	uint32_t u32_CyclicTask = 0;
 	/***************************************************************************************************************/
 	/*                                      MANAGE RUN TASK CYCLE                                                  */
 	/***************************************************************************************************************/
@@ -54,6 +56,7 @@ void FSM_Dock(S_MOWER_FSM_STATE e_FSM_Dock_State)
 
 	  	default:
 	  	case S_SUP_DOCK_Init:
+			FSM_Dock_Init();
 			FSM_Dock_DisableAllMotor();
 
 			if (gu8_isCharging)
@@ -93,15 +96,18 @@ void FSM_Dock(S_MOWER_FSM_STATE e_FSM_Dock_State)
 			if (gu8_isCharging)
 			{
 				FSM_Enum_SetFsmPhase(S_SUP_DOCK_In_Charge);
+				RUN_GPIO_ClearStartButton();
+				RUN_GPIO_SetErrorMowerNtr();
+		  		RUN_GPIO_SetEtatMowerInTask();
 			}
 
 			break;
 		case S_SUP_DOCK_Waiting_For_Leaving_Dock :
 			FSM_Dock_LeavingDockCharger(u32_CyclicTask);
-			
-			RUN_GPIO_ClearStartButton();
-			RUN_GPIO_SetErrorMowerNtr();
-		  	RUN_GPIO_SetEtatMowerInTask();
+			if (gu8_leavingDockState)
+			{
+				FSM_Enum_SetFsmPhase(S_SUP_OPERATIVE_Init);
+			}
 
 			break;
    }
@@ -120,7 +126,7 @@ void FSM_Dock_ADCReadValue(uint32_t u32_CyclicTask)
 void FSM_Dock_LeavingDockCharger(uint32_t u32_CyclicTask)
 {
 	if ( (u32_CyclicTask & CYCLIC_TASK_ADC_READ_VALUE) != 0) {
-		RUN_Mower_LeaveDockCharger();
+		gu8_isCharging = RUN_Mower_LeaveDockCharger();
 
 		RUN_Task_EraseCyclicTask(CYCLIC_TASK_ADC_READ_VALUE);
 	}
