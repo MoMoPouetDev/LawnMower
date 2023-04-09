@@ -14,6 +14,7 @@
 #include "HAL_Mower.h"
 #include "HAL_Timer.h"
 #include "HAL_Sonar.h"
+#include "HAL_GPIO.h"
 #include "RUN_PWM.h"
 #include "RUN_Mower.h"
 
@@ -66,7 +67,7 @@ uint8_t RUN_Mower_LeaveDockCharger()
 {
 	static uint8_t _u8_leaveState = 0;
 	static uint16_t _u16_randAngle = 0;
-	static uint16_t _u16_startAngle = gu16_currentAngle;
+	static uint16_t _u16_startAngle = 0;
 	static uint16_t _u16_endAngle = 0;
 	static uint16_t _u16_cptValue = 0;
 	uint8_t u8_returnValue = 0;
@@ -76,6 +77,7 @@ uint8_t RUN_Mower_LeaveDockCharger()
 		default:
 	  	case 0:
 			_u16_randAngle = HAL_Mower_MyRandDeg(180);
+			_u16_startAngle = gu16_currentAngle;
 			_u8_leaveState = 1;
 
 			break;
@@ -171,10 +173,13 @@ uint8_t RUN_Mower_WireDetection()
 {
 	static uint8_t _u8_wireState = 0;
 	static uint16_t _u16_randAngle = 0;
-	static uint16_t _u16_startAngle = gu16_currentAngle;
+	static uint16_t _u16_startAngle = 0;
 	static uint16_t _u16_endAngle = 0;
 	static uint8_t _u8_wireValue = 0;
 	static uint16_t _u16_cptValue = 0;
+	uint8_t u8_leftBumperState = 0;
+	uint8_t u8_centerBumperState = 0;
+	uint8_t u8_rightBumperState = 0;
 	uint8_t u8_returnValue = 0;
 
 	switch(_u8_wireState)
@@ -182,6 +187,11 @@ uint8_t RUN_Mower_WireDetection()
 		default:
 	  	case 0:
 			_u16_randAngle = HAL_Mower_MyRandDeg(360);
+			_u16_startAngle = gu16_currentAngle;
+			_u16_endAngle = (_u16_startAngle + _u16_randAngle)%360;
+			
+			RUN_PWM_Backward(MIDDLE_SPEED);
+
 			if (gu16_distanceWireLeft > WIRE_DETECTION_LIMITE)
 			{
 				_u8_wireValue = 1;
@@ -194,12 +204,6 @@ uint8_t RUN_Mower_WireDetection()
 			
 			break;
 		case 1:
-			_u16_endAngle = (_u16_startAngle + _u16_randAngle)%360;
-			RUN_PWM_Backward(MIDDLE_SPEED);
-			_u8_wireState = 2;
-
-			break;
-		case 2 :
 			if ( (_u16_cptValue) >= GPT_ONE_SECOND )
 			{
 				if (_u8_wireValue == 1)
@@ -207,19 +211,19 @@ uint8_t RUN_Mower_WireDetection()
 					RUN_PWM_Stop();
 					RUN_PWM_Right();
 					_u16_cptValue = 0;
-					_u8_wireState = 3;
+					_u8_wireState = 2;
 				}
 				else if (_u8_wireValue == 2)
 				{
 					RUN_PWM_Stop();
 					RUN_PWM_Left();
 					_u16_cptValue = 0;
-					_u8_wireState = 3;
+					_u8_wireState = 2;
 				}
 				else
 				{
 					_u16_cptValue = 0;
-					_u8_wireState = 3;
+					_u8_wireState = 2;
 				}
 			}
 			else
@@ -228,25 +232,111 @@ uint8_t RUN_Mower_WireDetection()
 			}
 			
 			break;
-		case 3 :
+		case 2 :
 			if ( (gu16_currentAngle > ((_u16_endAngle - gu8_deltaAngle)%180)) && (gu16_currentAngle < ((_u16_endAngle + gu8_deltaAngle)%180)) )
 			{
-				_u8_wireState = 4;
+				_u8_wireState = 3;
 			}
 			else
 			{
 				gu32_distanceWireRight = HAL_ADC_GetRightWireValue();
 				gu32_distanceWireLeft = HAL_ADC_GetLeftWireValue();
-				if ((gu32_distanceWireLeft > WIRE_DETECTION_LIMITE) || (gu32_distanceWireRight > WIRE_DETECTION_LIMITE) )
+
+				u8_leftBumperState = HAL_GPIO_GetFlagBumper(E_LEFT_BUMPER);
+				u8_centerBumperState = HAL_GPIO_GetFlagBumper(E_CENTER_BUMPER);
+				u8_rightBumperState = HAL_GPIO_GetFlagBumper(E_RIGHT_BUMPER);
+
+				if ( (u8_leftBumperState == 1) || (u8_centerBumperState == 1) || (u8_leftBumperState == 1) )
 				{
-					_u8_wireState = 4;
+					RUN_PWM_Stop();
+					_u8_wireState = 0;
+					u8_returnValue = 2;
+				}
+				else if ((gu32_distanceWireLeft > WIRE_DETECTION_LIMITE) || (gu32_distanceWireRight > WIRE_DETECTION_LIMITE) )
+				{
+					_u8_wireState = 0;
 				}
 			}
 
 			break;
-		case 4 :
+		case 3 :
 			RUN_PWM_Stop();
 			_u8_wireState = 0;
+			u8_returnValue = 1;
+
+			break;
+    }
+	return u8_returnValue;
+}
+
+uint8_t RUN_Mower_BumperDetection()
+{
+	static uint8_t _u8_bumperState = 0;
+	static uint16_t _u16_randAngle = 0;
+	static uint16_t _u16_startAngle = 0;
+	static uint16_t _u16_endAngle = 0;
+	static uint16_t _u16_cptValue = 0;
+	uint8_t u8_leftBumperState = 0;
+	uint8_t u8_centerBumperState = 0;
+	uint8_t u8_rightBumperState = 0;
+	uint8_t u8_returnValue = 0;
+
+	switch(_u8_bumperState)
+   	{
+		default:
+	  	case 0:
+			_u16_randAngle = HAL_Mower_MyRandDeg(360);
+			_u16_startAngle = gu16_currentAngle;
+			_u16_endAngle = (_u16_startAngle + _u16_randAngle)%360;
+
+			RUN_PWM_Backward(MIDDLE_SPEED);
+
+			_u8_bumperState = 1;
+			
+			break;
+		case 1 :
+			if ( (_u16_cptValue) >= GPT_ONE_SECOND )
+			{
+				RUN_PWM_Stop();
+				RUN_PWM_Left();
+				_u16_cptValue = 0;
+				_u8_bumperState = 2;
+			}
+			else
+			{
+				_u16_cptValue++;
+			}
+			
+			break;
+		case 2 :
+			if ( (gu16_currentAngle > ((_u16_endAngle - gu8_deltaAngle)%180)) && (gu16_currentAngle < ((_u16_endAngle + gu8_deltaAngle)%180)) )
+			{
+				_u8_bumperState = 3;
+			}
+			else
+			{
+				gu32_distanceWireRight = HAL_ADC_GetRightWireValue();
+				gu32_distanceWireLeft = HAL_ADC_GetLeftWireValue();
+
+				u8_leftBumperState = HAL_GPIO_GetFlagBumper(E_LEFT_BUMPER);
+				u8_centerBumperState = HAL_GPIO_GetFlagBumper(E_CENTER_BUMPER);
+				u8_rightBumperState = HAL_GPIO_GetFlagBumper(E_RIGHT_BUMPER);
+
+				if ( (u8_leftBumperState == 1) || (u8_centerBumperState == 1) || (u8_leftBumperState == 1) )
+				{
+					RUN_PWM_Stop();
+					_u8_bumperState = 0;
+				}
+				else if ((gu32_distanceWireLeft > WIRE_DETECTION_LIMITE) || (gu32_distanceWireRight > WIRE_DETECTION_LIMITE) )
+				{
+					_u8_bumperState = 3;
+				}
+			}
+
+			break;
+		case 3 :
+			RUN_PWM_Stop();
+			_u8_bumperState = 0;
 			u8_returnValue = 1;
 
 			break;

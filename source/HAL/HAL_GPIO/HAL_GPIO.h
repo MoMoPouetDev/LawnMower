@@ -124,6 +124,6 @@ uint32_t HAL_GPIO_GetTimerValue(void);
 void HAL_GPIO_UpdateBladeState(Etat e_bladeState);
 void HAL_GPIO_UpdateWheelState(MotorState e_wheelState);
 uint8_t HAL_GPIO_GetFlagButton(GPIO e_flagButton);
-void HAL_GPIO_ClearFlagButton(GPIO e_flagButton);
+uint8_t HAL_GPIO_GetFlagBumper(GPIO e_flagBumper);
 
 #endif /* HAL_HAL_GPIO_HAL_GPIO_H_ */

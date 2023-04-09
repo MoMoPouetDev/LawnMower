@@ -23,6 +23,7 @@ uint8_t gu8_startButtonState;
 uint8_t gu8_stopButtonState;
 uint8_t gu8_runMowerState;
 uint8_t gu8_wireDetectionState;
+uint8_t gu8_bumperDetectionState;
 
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
@@ -37,6 +38,7 @@ void FSM_Operative_Init()
 	gu8_stopButtonState = 0;
 	gu8_runMowerState = 0;
 	gu8_wireDetectionState = 0;
+	gu8_bumperDetectionState = 0;
 }
 
 void FSM_Operative(S_MOWER_FSM_STATE e_FSM_Operative_State)
@@ -83,7 +85,7 @@ void FSM_Operative(S_MOWER_FSM_STATE e_FSM_Operative_State)
 			RUN_GPIO_SetErrorMowerNtr();
 			
 			break;
-	  	case S_SUP_OPERATIVE_Wire_Detection_Left :
+	  	case S_SUP_OPERATIVE_Wire_Detection :
 			FSM_Operative_DisableMotor();
 
 			FSM_Operative_ADCReadValue(u32_CyclicTask);
@@ -97,9 +99,13 @@ void FSM_Operative(S_MOWER_FSM_STATE e_FSM_Operative_State)
 			{
 				FSM_Enum_SetFsmPhase(S_SUP_OPERATIVE_Moving);
 			}
+			else if (gu8_wireDetectionState == 2)
+			{
+				FSM_Enum_SetFsmPhase(S_SUP_OPERATIVE_Bumper_Detection);
+			}
 			
 		 	break;
-	  	case S_SUP_OPERATIVE_Wire_Detection_Right:
+	  	case S_SUP_OPERATIVE_Bumper_Detection:
 			FSM_Operative_DisableMotor();
 
 			FSM_Operative_ADCReadValue(u32_CyclicTask);
@@ -107,9 +113,9 @@ void FSM_Operative(S_MOWER_FSM_STATE e_FSM_Operative_State)
 			FSM_Operative_SonarDistance(u32_CyclicTask);
 			FSM_Operative_TiltProtection(u32_CyclicTask);
 
-			FSM_Operative_WireDetection(u32_CyclicTask);
+			FSM_Operative_BumperDetection(u32_CyclicTask);
 
-			if (gu8_wireDetectionState == 1)
+			if (gu8_bumperDetectionState == 1)
 			{
 				FSM_Enum_SetFsmPhase(S_SUP_OPERATIVE_Moving);
 			}
@@ -203,6 +209,14 @@ void FSM_Operative_WireDetection(uint32_t u32_CyclicTask)
 	if ( (u32_CyclicTask & CYCLIC_TASK_WIRE_DETECTION) != 0) {
 		gu8_wireDetectionState = RUN_Mower_WireDetection();
 		RUN_Task_EraseCyclicTask(CYCLIC_TASK_WIRE_DETECTION);
+	}
+}
+
+void FSM_Operative_BumperDetection(uint32_t u32_CyclicTask)
+{
+	if ( (u32_CyclicTask & CYCLIC_TASK_BUMPER_DETECTION) != 0) {
+		gu8_wireDetectionState = RUN_Mower_BumperDetection();
+		RUN_Task_EraseCyclicTask(CYCLIC_TASK_BUMPER_DETECTION);
 	}
 }
 
