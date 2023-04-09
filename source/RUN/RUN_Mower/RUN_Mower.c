@@ -298,7 +298,7 @@ uint8_t RUN_Mower_BumperDetection()
 			if ( (_u16_cptValue) >= GPT_ONE_SECOND )
 			{
 				RUN_PWM_Stop();
-				RUN_PWM_Left();
+				RUN_PWM_Right();
 				_u16_cptValue = 0;
 				_u8_bumperState = 2;
 			}

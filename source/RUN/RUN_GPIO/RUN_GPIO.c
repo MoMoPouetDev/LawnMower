@@ -69,6 +69,11 @@ void RUN_GPIO_SetErrorMowerNtr()
 	HAL_GPIO_SetErrorMower(NTR);
 }
 
+void RUN_GPIO_SetErrorMowerRain()
+{
+	HAL_GPIO_SetErrorMower(DETECTED_RAIN);
+}
+
 uint8_t RUN_GPIO_GetStartButton()
 {
 	uint8_t u8_flagButton = 0;

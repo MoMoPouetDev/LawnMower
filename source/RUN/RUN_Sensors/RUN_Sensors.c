@@ -45,10 +45,6 @@ uint8_t RUN_Sensors_IsTimeToMow()
 	{
 		u8_returnValue = 1;
 	}
-	else
-	{
-		u8_returnValue = 0;
-	}
 
 	return u8_returnValue;
 }
@@ -98,11 +94,9 @@ int8_t RUN_Sensors_IsEnoughCharged()
 			HAL_GPIO_SetErrorMower(VERY_LOW_BATTERY);
 		}
 		
-		u8_returnValue = 0;
-	}
-	else
 		u8_returnValue = 1;
-
+	}
+	
 	return u8_returnValue;
 }
 

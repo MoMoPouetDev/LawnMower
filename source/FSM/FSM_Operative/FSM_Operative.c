@@ -8,10 +8,12 @@
 /*--------------------------------------------------------------------------*/
 /* ... INCLUDES ...                                                         */
 /*--------------------------------------------------------------------------*/
+#include "HAL_GPIO.h"
 #include "RUN_Task.h"
 #include "RUN_Task_Interface.h"
 #include "RUN_ADC.h"
 #include "RUN_GPIO.h"
+#include "RUN_Sensors.h"
 
 #include "FSM_Enum.h"
 #include "FSM_Operative.h"
@@ -24,6 +26,9 @@ uint8_t gu8_stopButtonState;
 uint8_t gu8_runMowerState;
 uint8_t gu8_wireDetectionState;
 uint8_t gu8_bumperDetectionState;
+uint8_t gu8_timeToMow;
+int8_t gs8_charge;
+Etat ge_rain;
 
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
@@ -39,6 +44,9 @@ void FSM_Operative_Init()
 	gu8_runMowerState = 0;
 	gu8_wireDetectionState = 0;
 	gu8_bumperDetectionState = 0;
+	gu8_timeToMow = 0;
+	gs8_charge = 0;
+	ge_rain = OFF;
 }
 
 void FSM_Operative(S_MOWER_FSM_STATE e_FSM_Operative_State)
@@ -68,10 +76,11 @@ void FSM_Operative(S_MOWER_FSM_STATE e_FSM_Operative_State)
 			FSM_Operative_ADCReadValue(u32_CyclicTask);
 			FSM_Operative_AnglesRead(u32_CyclicTask);
 			FSM_Operative_SonarDistance(u32_CyclicTask);
+			FSM_Operative_SensorRead(u32_CyclicTask);
 			FSM_Operative_TiltProtection(u32_CyclicTask);
 
 			FSM_Operative_RunMower(u32_CyclicTask);	
-
+			
 			if (gu8_runMowerState == 1)
 			{
 				FSM_Enum_SetFsmPhase(S_SUP_OPERATIVE_Wire_Detection_Left);
@@ -83,11 +92,28 @@ void FSM_Operative(S_MOWER_FSM_STATE e_FSM_Operative_State)
 
 			RUN_GPIO_SetEtatMowerInTask();
 			RUN_GPIO_SetErrorMowerNtr();
+
+			if (gs8_charge == 1)
+			{
+				FSM_Enum_SetFsmPhase(S_SUP_OPERATIVE_Waiting_For_Return_To_Base);
+			}
+			else if (gs8_charge == -1)
+			{
+				FSM_Enum_SetFsmPhase(S_SUP_ERROR_Init);
+			}
+			else if (ge_rain == ON)
+			{
+				RUN_GPIO_SetErrorMowerRain
+				FSM_Enum_SetFsmPhase(S_SUP_OPERATIVE_Waiting_For_Return_To_Base);
+			}
+			else if (gu8_timeToMow == 0)
+			{
+				FSM_Enum_SetFsmPhase(S_SUP_OPERATIVE_Waiting_For_Return_To_Base);
+			}
+			
 			
 			break;
 	  	case S_SUP_OPERATIVE_Wire_Detection :
-			FSM_Operative_DisableMotor();
-
 			FSM_Operative_ADCReadValue(u32_CyclicTask);
 			FSM_Operative_AnglesRead(u32_CyclicTask);
 			FSM_Operative_SonarDistance(u32_CyclicTask);
@@ -106,8 +132,6 @@ void FSM_Operative(S_MOWER_FSM_STATE e_FSM_Operative_State)
 			
 		 	break;
 	  	case S_SUP_OPERATIVE_Bumper_Detection:
-			FSM_Operative_DisableMotor();
-
 			FSM_Operative_ADCReadValue(u32_CyclicTask);
 			FSM_Operative_AnglesRead(u32_CyclicTask);
 			FSM_Operative_SonarDistance(u32_CyclicTask);
@@ -169,6 +193,16 @@ void FSM_Operative_SonarDistance(uint32_t u32_CyclicTask)
 	if ( (u32_CyclicTask & CYCLIC_TASK_SONAR) != 0) {
 		RUN_Mower_SonarDistance();
 		RUN_Task_EraseCyclicTask(CYCLIC_TASK_SONAR);
+	}
+}
+
+void FSM_Operative_SensorRead(uint32_t u32_CyclicTask)
+{
+	if ( (u32_CyclicTask & CYCLIC_TASK_SENSOR_READ) != 0) {
+		ge_rain = RUN_Sensors_GetRainState();
+		gs8_charge = RUN_Sensors_IsEnoughCharged();
+		gu8_timeToMow = RUN_Sensors_IsTimeToMow();
+		RUN_Task_EraseCyclicTask(CYCLIC_TASK_SENSOR_READ);
 	}
 }
 
