@@ -11,6 +11,8 @@
         "hal_mower.h": "c",
         "hal_pwm.h": "c",
         "run_pwm.h": "c",
-        "run_mower.h": "c"
+        "run_mower.h": "c",
+        "hal_sonar.h": "c",
+        "run_gpio.h": "c"
     }
 }

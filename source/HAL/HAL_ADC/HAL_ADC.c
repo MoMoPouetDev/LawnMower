@@ -99,6 +99,11 @@ uint32_t HAL_ADC_GetBatteryValue()
 	return gu8_adcValueBattVolt;
 }
 
+uint32_t HAL_ADC_GetLeftWireValue()
+{
+	return gu8_adcValueLeftWire;
+}
+
 uint32_t HAL_ADC_GetRightWireValue()
 {
 	return gu8_adcValueRightWire;

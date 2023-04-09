@@ -130,3 +130,10 @@ int16_t HAL_FIFO_GetRollAverage(int16_t s16_value)
 	
 	return s16_returnValue;
 }
+
+void HAL_FIFO_GetSonarAverage(uint8_t* u8_distFC, uint8_t* u8_distFL, uint8_t* u8_distFR)
+{
+	*u8_distFC = HAL_FIFO_GetAverage(&fifoSonarFC, *u8_distFC);
+	*u8_distFL = HAL_FIFO_GetAverage(&fifoSonarFC, *u8_distFL);
+	*u8_distFR = HAL_FIFO_GetAverage(&fifoSonarFC, *u8_distFR);
+}

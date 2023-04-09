@@ -51,9 +51,6 @@ void FSM_Dock(S_MOWER_FSM_STATE e_FSM_Dock_State)
 
     switch( e_FSM_Dock_State )
    {
-
-		FSM_Dock_ADCReadValue(u32_CyclicTask);
-
 	  	default:
 	  	case S_SUP_DOCK_Init:
 			FSM_Dock_Init();
@@ -70,6 +67,8 @@ void FSM_Dock(S_MOWER_FSM_STATE e_FSM_Dock_State)
 
 			break;
 	  	case S_SUP_DOCK_In_Charge :
+			FSM_Dock_ADCReadValue(u32_CyclicTask);
+			FSM_Dock_AnglesRead(u32_CyclicTask);
 
 			if ( (RUN_Sensors_GetRainState() == OFF) && (RUN_Sensors_IsEnoughCharged() == 1) && (RUN_GPIO_GetStartButton() == 1) )
 			{
@@ -85,6 +84,8 @@ void FSM_Dock(S_MOWER_FSM_STATE e_FSM_Dock_State)
 
 		 	break;
 		case S_SUP_DOCK_Waiting_For_Mow :
+			FSM_Dock_ADCReadValue(u32_CyclicTask);
+			FSM_Dock_AnglesRead(u32_CyclicTask);
 
 			if ( (RUN_Sensors_IsTimeToMow() == 1) && (RUN_Sensors_GetRainState() == OFF) )
 			{
@@ -103,6 +104,9 @@ void FSM_Dock(S_MOWER_FSM_STATE e_FSM_Dock_State)
 
 			break;
 		case S_SUP_DOCK_Waiting_For_Leaving_Dock :
+			FSM_Dock_ADCReadValue(u32_CyclicTask);
+			FSM_Dock_AnglesRead(u32_CyclicTask);
+			
 			FSM_Dock_LeavingDockCharger(u32_CyclicTask);
 			if (gu8_leavingDockState)
 			{
@@ -120,6 +124,15 @@ void FSM_Dock_ADCReadValue(uint32_t u32_CyclicTask)
 		gu8_isCharging = RUN_Sensors_IsCharging();
 
 		RUN_Task_EraseCyclicTask(CYCLIC_TASK_ADC_READ_VALUE);
+	}
+}
+
+void FSM_Dock_AnglesRead(uint32_t u32_CyclicTask)
+{
+	if ( (u32_CyclicTask & CYCLIC_TASK_ANGLE_READ) != 0) {
+		RUN_Mower_GetAngles();
+
+		RUN_Task_EraseCyclicTask(CYCLIC_TASK_ANGLE_READ);
 	}
 }
 
