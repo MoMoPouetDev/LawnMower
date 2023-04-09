@@ -53,6 +53,7 @@ void FSM_Dock(S_MOWER_FSM_STATE e_FSM_Dock_State)
    {
 
 		FSM_Dock_ADCReadValue(u32_CyclicTask);
+		FSM_Dock_AnglesRead(u32_CyclicTask);
 
 	  	default:
 	  	case S_SUP_DOCK_Init:
@@ -120,6 +121,15 @@ void FSM_Dock_ADCReadValue(uint32_t u32_CyclicTask)
 		gu8_isCharging = RUN_Sensors_IsCharging();
 
 		RUN_Task_EraseCyclicTask(CYCLIC_TASK_ADC_READ_VALUE);
+	}
+}
+
+void FSM_Dock_AnglesRead(uint32_t u32_CyclicTask)
+{
+	if ( (u32_CyclicTask & CYCLIC_TASK_ANGLE_READ) != 0) {
+		RUN_Mower_GetAngles();
+
+		RUN_Task_EraseCyclicTask(CYCLIC_TASK_ANGLE_READ);
 	}
 }
 
