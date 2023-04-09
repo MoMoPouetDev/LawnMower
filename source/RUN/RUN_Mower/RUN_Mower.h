@@ -22,5 +22,7 @@
 /*--------------------------------------------------------------------------*/
 void RUN_Mower_Init(void);
 uint8_t RUN_Mower_LeaveDockCharger(void);
+void RUN_Mower_GetAngles(void);
+void RUN_Mower_RunMower(void);
 
 #endif /* RUN_RUN_MOWER_RUN_MOWER_H_ */

@@ -28,5 +28,6 @@
 /*--------------------------------------------------------------------------*/
 void HAL_Sonar_Init(void);
 void HAL_Sonar_Distance(void);
+void HAL_Sonar_GetDistance(uint8_t* u8_distFC, uint8_t* u8_distFL, uint8_t* u8_distFR);
 
 #endif /* HAL_HAL_SONAR_HAL_SONAR_H_ */

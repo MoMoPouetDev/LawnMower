@@ -46,3 +46,15 @@ void RUN_PWM_Right()
 	HAL_GPIO_UpdateWheelState(RIGHT);
 	HAL_PWM_Right();
 }
+
+void RUN_PWM_Forward(uint8_t u8_speed)
+{
+	HAL_GPIO_UpdateWheelState(FORWARD);
+	HAL_PWM_Forward(u8_speed);
+}
+
+void RUN_PWM_Left()
+{
+	HAL_GPIO_UpdateWheelState(LEFT);
+	HAL_PWM_Left();
+}

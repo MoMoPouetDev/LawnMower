@@ -340,10 +340,12 @@ uint8_t HAL_GPIO_GetFlagButton(GPIO e_flagButton)
 	{
 	case E_STOP_BUTTON :
 		u8_flagButton = gu8_flagStopButton;
+		gu8_flagStopButton = 0;
 		break;
 
 	case E_START_BUTTON :
 		u8_flagButton = gu8_flagStartButton;
+		gu8_flagStartButton = 0;
 		break;
 	
 	default:
