@@ -192,7 +192,7 @@ uint8_t RUN_Mower_WireDetection()
 			
 			RUN_PWM_Backward(MIDDLE_SPEED);
 
-			if (gu16_distanceWireLeft > WIRE_DETECTION_LIMITE)
+			if ( (gu16_distanceWireLeft > WIRE_DETECTION_LIMITE))
 			{
 				_u8_wireValue = 1;
 			}
@@ -346,18 +346,26 @@ uint8_t RUN_Mower_BumperDetection()
 
 uint8_t RUN_Mower_RunMower()
 {
+	uint8_t u8_leftBumperState = 0;
+	uint8_t u8_centerBumperState = 0;
+	uint8_t u8_rightBumperState = 0;
 	uint8_t u8_returnValue = 0;
+
 	HAL_Sonar_GetDistance(&gu8_distanceSonarFC, &gu8_distanceSonarFL, &gu8_distanceSonarFR);
 	HAL_FIFO_GetSonarAverage(&gu8_distanceSonarFC, &gu8_distanceSonarFL, &gu8_distanceSonarFR);
 
 	gu16_distanceWireLeft = HAL_ADC_GetLeftWireValue();
 	gu16_distanceWireRight = HAL_ADC_GetRightWireValue();
 
-	if (gu16_distanceWireLeft > WIRE_DETECTION_LIMITE) 
+	u8_leftBumperState = HAL_GPIO_GetFlagBumper(E_LEFT_BUMPER);
+	u8_centerBumperState = HAL_GPIO_GetFlagBumper(E_CENTER_BUMPER);
+	u8_rightBumperState = HAL_GPIO_GetFlagBumper(E_RIGHT_BUMPER);
+
+	if ( (gu16_distanceWireLeft > WIRE_DETECTION_LIMITE) || (gu16_distanceWireRight > WIRE_DETECTION_LIMITE) ) 
 	{
 		u8_returnValue = 1;
 	}
-	else if (gu16_distanceWireRight > WIRE_DETECTION_LIMITE) 
+	else if ((u8_leftBumperState == 1) || (u8_centerBumperState == 1) || (u8_rightBumperState == 1)) 
 	{
 		u8_returnValue = 2;
 	}

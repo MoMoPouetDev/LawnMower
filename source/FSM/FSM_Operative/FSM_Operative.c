@@ -83,11 +83,11 @@ void FSM_Operative(S_MOWER_FSM_STATE e_FSM_Operative_State)
 			
 			if (gu8_runMowerState == 1)
 			{
-				FSM_Enum_SetFsmPhase(S_SUP_OPERATIVE_Wire_Detection_Left);
+				FSM_Enum_SetFsmPhase(S_SUP_OPERATIVE_Wire_Detection);
 			}
 			else if (gu8_runMowerState == 2)
 			{
-				FSM_Enum_SetFsmPhase(S_SUP_OPERATIVE_Wire_Detection_Right);
+				FSM_Enum_SetFsmPhase(S_SUP_OPERATIVE_Bumper_Detection);
 			}
 
 			RUN_GPIO_SetEtatMowerInTask();
@@ -103,7 +103,7 @@ void FSM_Operative(S_MOWER_FSM_STATE e_FSM_Operative_State)
 			}
 			else if (ge_rain == ON)
 			{
-				RUN_GPIO_SetErrorMowerRain
+				RUN_GPIO_SetErrorMowerRain();
 				FSM_Enum_SetFsmPhase(S_SUP_OPERATIVE_Waiting_For_Return_To_Base);
 			}
 			else if (gu8_timeToMow == 0)
@@ -249,7 +249,7 @@ void FSM_Operative_WireDetection(uint32_t u32_CyclicTask)
 void FSM_Operative_BumperDetection(uint32_t u32_CyclicTask)
 {
 	if ( (u32_CyclicTask & CYCLIC_TASK_BUMPER_DETECTION) != 0) {
-		gu8_wireDetectionState = RUN_Mower_BumperDetection();
+		gu8_bumperDetectionState = RUN_Mower_BumperDetection();
 		RUN_Task_EraseCyclicTask(CYCLIC_TASK_BUMPER_DETECTION);
 	}
 }
