@@ -10,9 +10,11 @@
 /*--------------------------------------------------------------------------*/
 #include "RUN_Task.h"
 #include "RUN_Task_Interface.h"
+#include "RUN_ADC.h"
 #include "RUN_Sensors.h"
 #include "RUN_GPIO.h"
 #include "RUN_PWM.h"
+#include "RUN_Mower.h"
 
 #include "FSM_Enum.h"
 #include "FSM_Dock.h"
@@ -26,6 +28,7 @@ uint8_t gu8_leavingDockState;
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
 void FSM_Dock_ADCReadValue(uint32_t u32_CyclicTask);
+void FSM_Dock_AnglesRead(uint32_t u32_CyclicTask);
 void FSM_Dock_LeavingDockCharger(uint32_t u32_CyclicTask);
 void FSM_Dock_DisableAllMotor(void);
 /*---------------------------------------------------------------------------*/
@@ -97,7 +100,6 @@ void FSM_Dock(S_MOWER_FSM_STATE e_FSM_Dock_State)
 			if (gu8_isCharging)
 			{
 				FSM_Enum_SetFsmPhase(S_SUP_DOCK_In_Charge);
-				RUN_GPIO_ClearStartButton();
 				RUN_GPIO_SetErrorMowerNtr();
 		  		RUN_GPIO_SetEtatMowerInTask();
 			}
@@ -138,7 +140,7 @@ void FSM_Dock_AnglesRead(uint32_t u32_CyclicTask)
 
 void FSM_Dock_LeavingDockCharger(uint32_t u32_CyclicTask)
 {
-	if ( (u32_CyclicTask & CYCLIC_TASK_ADC_READ_VALUE) != 0) {
+	if ( (u32_CyclicTask & CYCLIC_TASK_LEAVE_DOCK) != 0) {
 		gu8_isCharging = RUN_Mower_LeaveDockCharger();
 
 		RUN_Task_EraseCyclicTask(CYCLIC_TASK_ADC_READ_VALUE);

@@ -24,6 +24,7 @@ void RUN_GPIO_SetEtatMowerInTask(void);
 void RUN_GPIO_SetEtatMowerInWait(void);
 void RUN_GPIO_SetEtatMowerReturnToBase();
 void RUN_GPIO_SetErrorMowerNtr(void);
+void RUN_GPIO_SetErrorMowerRain(void);
 uint8_t RUN_GPIO_GetStartButton(void);
 uint8_t RUN_GPIO_GetStopButton(void);
 
