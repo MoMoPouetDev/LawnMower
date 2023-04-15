@@ -110,6 +110,7 @@ void FSM_Operative(S_MOWER_FSM_STATE e_FSM_Operative_State)
 			}
 			else if (gs8_charge == -1)
 			{
+				RUN_GPIO_SetEtatMowerReturnToBase();
 				FSM_Enum_SetFsmPhase(S_SUP_ERROR_Init);
 			}
 			else if (ge_rain == ON)
