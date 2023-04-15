@@ -16,6 +16,9 @@
 /*--------------------------------------------------------------------------*/
 /* ... DATATYPES ...                                                        */
 /*--------------------------------------------------------------------------*/
+#define SONAR_WARN 30
+#define SONAR_LIMITE 20
+#define SONAR_ERR 10
 #define SONAR_DIST_ERR 999
 #define TIMER1_OVERFLOW 65535
 /*** Calcul of value timer 343 m/s -> 34300 cm/s

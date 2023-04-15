@@ -21,6 +21,7 @@
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
 void HAL_Mower_Init(void);
+uint16_t HAL_Mower_MyRandDeg(uint16_t u16_modulo);
 int16_t HAL_Mower_GetAngleFromNorth(double d_pitch, double d_roll, uint8_t* pu8_rxBuffCompass, uint8_t* pu8_rxBuffCompassSize);
 void HAL_Mower_GetAnglePitchRoll(double* pd_pitch, double* pd_roll, uint8_t* pu8_rxBuffAccel, uint8_t* pu8_rxBuffAccelSize);
 void HAL_Mower_TiltProtection(double d_pitch, double d_roll);

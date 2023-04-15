@@ -8,10 +8,10 @@
 /*--------------------------------------------------------------------------*/
 /*! ... INCLUDES ...                                                        */
 /*--------------------------------------------------------------------------*/
-#include "stdint.h"
-#include "stdio.h"
-#include "stdlib.h"
-#include "math.h"
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 
 #include "HAL_FIFO.h"
 #include "HAL_GPIO.h"
@@ -20,6 +20,7 @@
 /*--------------------------------------------------------------------------*/
 /* ... DATATYPES ...                                                        */
 /*--------------------------------------------------------------------------*/
+#define M_PI 3.14
 #define DECLINATION ((54)*(M_PI/(60*180))) //0.015
 #define OFFSET (19*M_PI)/16
 
@@ -68,8 +69,6 @@ int16_t HAL_Mower_GetAngleFromNorth(double d_pitch, double d_roll, uint8_t* pu8_
                 dataY = 0,
                 dataZ = 0,
 		        angle = 0;
-	double dPitch,
-			dRoll;
 	float xh,
 		yh,
 		rPitch,
@@ -86,8 +85,8 @@ int16_t HAL_Mower_GetAngleFromNorth(double d_pitch, double d_roll, uint8_t* pu8_
     dataY = (int16_t)((dataMsbY<<8) | dataLsbY);
     dataZ = (int16_t)((dataMsbZ<<8) | dataLsbZ);
 	
-	rPitch = (M_PI/180)*dPitch;
-	rRoll = (M_PI/180)*dRoll;
+	rPitch = (M_PI/180)*d_pitch;
+	rRoll = (M_PI/180)*d_roll;
   
 	xh = ((float)(dataX - OFFSET_X) * cos(rPitch)) + ((float)(dataY - OFFSET_Y) * sin(rRoll) * sin(rPitch)) - ((float)(dataZ - OFFSET_Z) * cos(rRoll) * sin(rPitch));
 	yh = ((float)(dataY - OFFSET_Y) * cos(rRoll)) + ((float)(dataZ - OFFSET_Z) * sin(rRoll));

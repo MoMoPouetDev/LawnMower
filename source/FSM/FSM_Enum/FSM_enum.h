@@ -23,9 +23,9 @@
 
      S_SUP_OPERATIVE_Init                           = PHASE_OPERATIVE_INIT,//64
      S_SUP_OPERATIVE_Moving                         = S_SUP_OPERATIVE_Init + 1U,//68
-     S_SUP_OPERATIVE_Wire_Detection_Left            = S_SUP_OPERATIVE_Moving + 1U,
-     S_SUP_OPERATIVE_Wire_Detection_Right           = S_SUP_OPERATIVE_Wire_Detection_Left + 1U,
-     S_SUP_OPERATIVE_Waiting                        = S_SUP_OPERATIVE_Wire_Detection_Right + 1U,
+	 S_SUP_OPERATIVE_Wire_Detection            		= S_SUP_OPERATIVE_Moving + 1U,
+     S_SUP_OPERATIVE_Bumper_Detection         		= S_SUP_OPERATIVE_Wire_Detection + 1U,
+     S_SUP_OPERATIVE_Waiting                        = S_SUP_OPERATIVE_Bumper_Detection + 1U,
      S_SUP_OPERATIVE_Waiting_For_Return_To_Base     = PHASE_OPERATIVE_WAITING_FOR_RETURN_TO_BASE,
 
      S_SUP_RETURN_TO_BASE_Init                      = PHASE_RETURN_TO_BASE_INIT, //80

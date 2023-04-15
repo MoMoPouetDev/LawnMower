@@ -8,7 +8,8 @@
 /*--------------------------------------------------------------------------*/
 /*! ... INCLUDES ...                                                        */
 /*--------------------------------------------------------------------------*/
-#include "stdint.h"
+#include <stdint.h>
+#include "HAL_ADC.h"
 #include "HAL_I2C.h"
 #include "HAL_FIFO.h"
 #include "HAL_Mower.h"
@@ -40,8 +41,8 @@ static uint8_t gu8_distanceSonarFL;
 static uint8_t gu8_distanceSonarFR;
 static uint16_t gu16_distanceWireLeft;
 static uint16_t gu16_distanceWireRight;
-static uint8_t gd_pitch;
-static uint8_t gd_roll;
+static double gd_pitch;
+static double gd_roll;
 static uint16_t gu16_currentAngle;
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
@@ -108,8 +109,8 @@ uint8_t RUN_Mower_LeaveDockCharger()
 			}
 			else
 			{
-				gu32_distanceWireRight = HAL_ADC_GetRightWireValue();
-				if (gu32_distanceWireRight > WIRE_DETECTION_LIMITE)
+				gu16_distanceWireRight = HAL_ADC_GetRightWireValue();
+				if (gu16_distanceWireRight > WIRE_DETECTION_LIMITE)
 				{
 					_u8_leaveState = 4;
 				}
@@ -151,7 +152,7 @@ void RUN_Mower_GetAngles()
 			u8_flagI2c = HAL_I2C_ReadCompass(_tu8_rxBuffCompass, &_u8_rxBuffCompassSize);
 			if (u8_flagI2c)
 			{
-				gu16_currentAngle = HAL_Mower_getAngleFromNorth(gd_pitch, gd_roll, _tu8_rxBuffCompass, &_u8_rxBuffCompassSize);
+				gu16_currentAngle = HAL_Mower_GetAngleFromNorth(gd_pitch, gd_roll, _tu8_rxBuffCompass, &_u8_rxBuffCompassSize);
 				_u8_getAngleState = 0;
 			}
 
@@ -239,20 +240,20 @@ uint8_t RUN_Mower_WireDetection()
 			}
 			else
 			{
-				gu32_distanceWireRight = HAL_ADC_GetRightWireValue();
-				gu32_distanceWireLeft = HAL_ADC_GetLeftWireValue();
+				gu16_distanceWireRight = HAL_ADC_GetRightWireValue();
+				gu16_distanceWireLeft = HAL_ADC_GetLeftWireValue();
 
 				u8_leftBumperState = HAL_GPIO_GetFlagBumper(E_LEFT_BUMPER);
 				u8_centerBumperState = HAL_GPIO_GetFlagBumper(E_CENTER_BUMPER);
 				u8_rightBumperState = HAL_GPIO_GetFlagBumper(E_RIGHT_BUMPER);
 
-				if ( (u8_leftBumperState == 1) || (u8_centerBumperState == 1) || (u8_leftBumperState == 1) )
+				if ( (u8_leftBumperState == 1) || (u8_centerBumperState == 1) || (u8_rightBumperState == 1) )
 				{
 					RUN_PWM_Stop();
 					_u8_wireState = 0;
 					u8_returnValue = 2;
 				}
-				else if ((gu32_distanceWireLeft > WIRE_DETECTION_LIMITE) || (gu32_distanceWireRight > WIRE_DETECTION_LIMITE) )
+				else if ((gu16_distanceWireLeft > WIRE_DETECTION_LIMITE) || (gu16_distanceWireRight > WIRE_DETECTION_LIMITE) )
 				{
 					_u8_wireState = 0;
 				}
@@ -315,19 +316,19 @@ uint8_t RUN_Mower_BumperDetection()
 			}
 			else
 			{
-				gu32_distanceWireRight = HAL_ADC_GetRightWireValue();
-				gu32_distanceWireLeft = HAL_ADC_GetLeftWireValue();
+				gu16_distanceWireRight = HAL_ADC_GetRightWireValue();
+				gu16_distanceWireLeft = HAL_ADC_GetLeftWireValue();
 
 				u8_leftBumperState = HAL_GPIO_GetFlagBumper(E_LEFT_BUMPER);
 				u8_centerBumperState = HAL_GPIO_GetFlagBumper(E_CENTER_BUMPER);
 				u8_rightBumperState = HAL_GPIO_GetFlagBumper(E_RIGHT_BUMPER);
 
-				if ( (u8_leftBumperState == 1) || (u8_centerBumperState == 1) || (u8_leftBumperState == 1) )
+				if ( (u8_leftBumperState == 1) || (u8_centerBumperState == 1) || (u8_rightBumperState == 1) )
 				{
 					RUN_PWM_Stop();
 					_u8_bumperState = 0;
 				}
-				else if ((gu32_distanceWireLeft > WIRE_DETECTION_LIMITE) || (gu32_distanceWireRight > WIRE_DETECTION_LIMITE) )
+				else if ((gu16_distanceWireLeft > WIRE_DETECTION_LIMITE) || (gu16_distanceWireRight > WIRE_DETECTION_LIMITE) )
 				{
 					_u8_bumperState = 3;
 				}

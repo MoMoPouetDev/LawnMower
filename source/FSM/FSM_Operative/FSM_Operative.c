@@ -14,6 +14,8 @@
 #include "RUN_ADC.h"
 #include "RUN_GPIO.h"
 #include "RUN_Sensors.h"
+#include "RUN_Mower.h"
+#include "RUN_PWM.h"
 
 #include "FSM_Enum.h"
 #include "FSM_Operative.h"
@@ -28,12 +30,21 @@ uint8_t gu8_wireDetectionState;
 uint8_t gu8_bumperDetectionState;
 uint8_t gu8_timeToMow;
 int8_t gs8_charge;
-Etat ge_rain;
+static Etat ge_rain;
 
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
 void FSM_Operative_ADCReadValue(uint32_t u32_CyclicTask);
+void FSM_Operative_AnglesRead(uint32_t u32_CyclicTask);
+void FSM_Operative_SonarDistance(uint32_t u32_CyclicTask);
+void FSM_Operative_SensorRead(uint32_t u32_CyclicTask);
+void FSM_Operative_TiltProtection(uint32_t u32_CyclicTask);
+void FSM_Operative_RunMower(uint32_t u32_CyclicTask);
+void FSM_Operative_WireDetection(uint32_t u32_CyclicTask);
+void FSM_Operative_BumperDetection(uint32_t u32_CyclicTask);
+void FSM_Operative_DisableAllMotor(void);
+void FSM_Operative_GetFlagStartButton(uint32_t u32_CyclicTask);
 /*---------------------------------------------------------------------------*/
 /* ... FUNCTIONS DEFINITIONS...                                              */
 /*---------------------------------------------------------------------------*/
@@ -182,9 +193,9 @@ void FSM_Operative_ADCReadValue(uint32_t u32_CyclicTask)
 
 void FSM_Operative_AnglesRead(uint32_t u32_CyclicTask)
 {
-	if ( (u32_CyclicTask & CYCLIC_TASK_READ_ANGLES) != 0) {
+	if ( (u32_CyclicTask & CYCLIC_TASK_ANGLE_READ) != 0) {
 		RUN_Mower_GetAngles();
-		RUN_Task_EraseCyclicTask(CYCLIC_TASK_READ_ANGLES);
+		RUN_Task_EraseCyclicTask(CYCLIC_TASK_ANGLE_READ);
 	}
 }
 
