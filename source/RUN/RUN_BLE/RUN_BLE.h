@@ -16,5 +16,6 @@
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
 void RUN_BLE_Init(void);
+void RUN_BLE_SendStatus(void);
 
 #endif /* RUN_RUN_BLE_RUN_BLE_H_ */

@@ -9,6 +9,7 @@
 /*! ... INCLUDES ...                                                        */
 /*--------------------------------------------------------------------------*/
 #include <stdint.h>
+#include <math.h>
 #include "HAL_ADC.h"
 #include "HAL_I2C.h"
 #include "HAL_FIFO.h"
@@ -337,31 +338,29 @@ uint8_t RUN_Mower_WireDetectionOnReturn()
 			
 			break;
 		case 2 :
-			if ( (gu16_currentAngle > ((_u16_endAngle - gu8_deltaAngle)%360)) && (gu16_currentAngle < ((_u16_endAngle + gu8_deltaAngle)%360)) )
+			gu16_distanceWireRight = HAL_ADC_GetRightWireValue();
+			gu16_distanceWireLeft = HAL_ADC_GetLeftWireValue();
+
+			u8_leftBumperState = HAL_GPIO_GetFlagBumper(E_LEFT_BUMPER);
+			u8_centerBumperState = HAL_GPIO_GetFlagBumper(E_CENTER_BUMPER);
+			u8_rightBumperState = HAL_GPIO_GetFlagBumper(E_RIGHT_BUMPER);
+
+			if ( (u8_leftBumperState == 1) || (u8_centerBumperState == 1) || (u8_rightBumperState == 1) )
+			{
+				RUN_PWM_Stop();
+				_u8_wireState = 0;
+				u8_returnValue = 2;
+			}
+			else if ( gu16_distanceWireLeft > WIRE_DETECTION_LIMITE )
 			{
 				_u8_wireState = 3;
 			}
-			else
+			else if (gu16_distanceWireRight > WIRE_DETECTION_LIMITE)
 			{
-				gu16_distanceWireRight = HAL_ADC_GetRightWireValue();
-				gu16_distanceWireLeft = HAL_ADC_GetLeftWireValue();
-
-				u8_leftBumperState = HAL_GPIO_GetFlagBumper(E_LEFT_BUMPER);
-				u8_centerBumperState = HAL_GPIO_GetFlagBumper(E_CENTER_BUMPER);
-				u8_rightBumperState = HAL_GPIO_GetFlagBumper(E_RIGHT_BUMPER);
-
-				if ( (u8_leftBumperState == 1) || (u8_centerBumperState == 1) || (u8_rightBumperState == 1) )
-				{
-					RUN_PWM_Stop();
-					_u8_wireState = 0;
-					u8_returnValue = 2;
-				}
-				else if ((gu16_distanceWireLeft > WIRE_DETECTION_LIMITE) || (gu16_distanceWireRight > WIRE_DETECTION_LIMITE) )
-				{
-					_u8_wireState = 0;
-				}
+				RUN_PWM_Stop();
+				_u8_wireState = 0;
 			}
-
+			
 			break;
 		case 3 :
 			RUN_PWM_Stop();
@@ -450,8 +449,7 @@ uint8_t RUN_Mower_BumperDetection()
 
 uint8_t RUN_Mower_DirectionFromBase() 
 {
-	static uint16_t _u16_angleFromNorth = 0;
-	static uint16_t _u16_angleFromBase = 0;//MOWER_getAzimut(angleFromNorth);
+	static uint16_t _u16_angleFromBase = 0;
 	static uint8_t _u8_baseState = 0;
 	uint8_t u8_leftBumperState = 0;
 	uint8_t u8_centerBumperState = 0;
@@ -461,8 +459,7 @@ uint8_t RUN_Mower_DirectionFromBase()
 	switch (_u8_baseState)
 	{
 		case 0:
-			_u16_angleFromNorth = gu16_currentAngle;
-			HAL_Mower_GetAzimut();
+			RUN_Mower_GetAzimut();
 			_u16_angleFromBase = gu16_azimut;
 			RUN_PWM_Right();
 
@@ -482,7 +479,7 @@ uint8_t RUN_Mower_DirectionFromBase()
 				u8_centerBumperState = HAL_GPIO_GetFlagBumper(E_CENTER_BUMPER);
 				u8_rightBumperState = HAL_GPIO_GetFlagBumper(E_RIGHT_BUMPER);
 
-				if ( (u8_leftBumperState == 1) || (u8_centerBumperState == 1) || (u8_leftBumperState == 1) )
+				if ( (u8_leftBumperState == 1) || (u8_centerBumperState == 1) || (u8_rightBumperState == 1) )
 				{
 					RUN_PWM_Stop();
 					_u8_baseState = 0;

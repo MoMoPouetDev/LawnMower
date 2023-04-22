@@ -1,12 +1,12 @@
 /*
- * RUN_BLE.h
+ * RUN_UART.h
  *
  *  Created on: 19 FEB 2023
  *      Author: morgan.venandy
  */
 
-#ifndef RUN_RUN_BLE_RUN_BLE_H_
-#define RUN_RUN_BLE_RUN_BLE_H_
+#ifndef RUN_RUN_UART_RUN_UART_H_
+#define RUN_RUN_UART_RUN_UART_H_
 
 /*--------------------------------------------------------------------------*/
 /*! ... INCLUDES ...                                                        */
@@ -15,6 +15,6 @@
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
-void RUN_BLE_Init(void);
+void RUN_UART_Init(void);
 
-#endif /* RUN_RUN_BLE_RUN_BLE_H_ */
+#endif /* RUN_RUN_UART_RUN_UART_H_ */

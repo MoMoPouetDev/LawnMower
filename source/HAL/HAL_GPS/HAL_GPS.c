@@ -20,10 +20,10 @@
 Coordinates gst_latitude;
 Coordinates gst_longitude;
 
-uint8_t u8_minutesGpsAcquisition;
-uint8_t u8_hoursGpsAcquisition;
-uint8_t u8_monthsGpsAcquisition;
-uint8_t u8_daysGpsAcquisition;
+uint8_t gu8_minutesGpsAcquisition;
+uint8_t gu8_hoursGpsAcquisition;
+uint8_t gu8_monthsGpsAcquisition;
+uint8_t gu8_daysGpsAcquisition;
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
@@ -43,22 +43,22 @@ void HAL_GPS_rmcLatLong(DataNmea_RMC*);
 /*--------------------------------------------------------------------------*/
 void HAL_GPS_Init() 
 {
-    _uMinutesGpsAcquisition = 0;
-	_uHoursGpsAcquisition = 0;
-	_uMonthsGpsAcquisition = 0;
-	_uDaysGpsAcquisition = 0;
+    gu8_minutesGpsAcquisition = 0;
+    gu8_hoursGpsAcquisition = 0;
+    gu8_monthsGpsAcquisition = 0;
+    gu8_daysGpsAcquisition = 0;
 
-    _tLatitude.degrees = 0;
-    _tLatitude.minutes = 0;
-    _tLatitude.decimalMSB = 0;
-    _tLatitude.decimalB = 0;
-    _tLatitude.decimalLSB = 0;
+    gst_latitude.degrees = 0;
+    gst_latitude.minutes = 0;
+    gst_latitude.decimalMSB = 0;
+    gst_latitude.decimalB = 0;
+    gst_latitude.decimalLSB = 0;
 
-    _tLongitude.degrees = 0;
-    _tLongitude.minutes = 0;
-    _tLongitude.decimalMSB = 0;
-    _tLongitude.decimalB = 0;
-    _tLongitude.decimalLSB = 0;
+    gst_longitude.degrees = 0;
+    gst_longitude.minutes = 0;
+    gst_longitude.decimalMSB = 0;
+    gst_longitude.decimalB = 0;
+    gst_longitude.decimalLSB = 0;
 }
 void HAL_GPS_startGpsAcquisition() {
 	uint8_t _bDecodeNmea = 0;
@@ -409,11 +409,11 @@ void HAL_GPS_rmcUtcTime(DataNmea_RMC *pNmeaRmc){
     
     tabTemp[0] = pNmeaRmc->utcTime[0];
     tabTemp[1] = pNmeaRmc->utcTime[1];
-    u8_hoursGpsAcquisition = (atoi(tabTemp));
+    gu8_hoursGpsAcquisition = (atoi(tabTemp));
     
     tabTemp[0] = pNmeaRmc->utcTime[2];
     tabTemp[1] = pNmeaRmc->utcTime[3];
-    u8_minutesGpsAcquisition = (atoi(tabTemp));
+    gu8_minutesGpsAcquisition = (atoi(tabTemp));
 }
 
 void HAL_GPS_rmcDate(DataNmea_RMC *pNmeaRmc){
@@ -421,11 +421,11 @@ void HAL_GPS_rmcDate(DataNmea_RMC *pNmeaRmc){
 
     tabTemp[0] = pNmeaRmc->utcDate[0];
     tabTemp[1] = pNmeaRmc->utcDate[1];
-    u8_daysGpsAcquisition = (atoi(tabTemp));
+    gu8_daysGpsAcquisition = (atoi(tabTemp));
 
     tabTemp[0] = pNmeaRmc->utcDate[2];
     tabTemp[1] = pNmeaRmc->utcDate[3];
-    u8_monthsGpsAcquisition = (atoi(tabTemp));
+    gu8_monthsGpsAcquisition = (atoi(tabTemp));
 }
 
 void HAL_GPS_rmcLatLong(DataNmea_RMC *pNmeaRmc) {
@@ -481,7 +481,7 @@ void HAL_GPS_rmcLatLong(DataNmea_RMC *pNmeaRmc) {
 
 uint8_t HAL_GPS_GetHours()
 {
-    return u8_hoursGpsAcquisition;
+    return gu8_hoursGpsAcquisition;
 }
 
 void HAL_GPS_GetCoordinates(float* pLatitudeCoordinates, float* pLongitudeCoordinates) 
@@ -497,6 +497,6 @@ void HAL_GPS_GetCoordinates(float* pLatitudeCoordinates, float* pLongitudeCoordi
     *pLatitudeCoordinates = (float)gst_latitude.degrees + (atof(tempLat)/60.0);
     
     tempLongDecimal = ((uint32_t)gst_longitude.decimalMSB << 16) | ((uint32_t)gst_longitude.decimalB << 8) | ((uint32_t)gst_longitude.decimalLSB);
-    sprintf(tempLong, "%d.%d",(int)tLonggst_longitudeitude.minutes, (int)tempLongDecimal);
+    sprintf(tempLong, "%d.%d",(int)gst_longitude.minutes, (int)tempLongDecimal);
     *pLongitudeCoordinates = (float)gst_longitude.degrees + (atof(tempLong)/60.0);
 }

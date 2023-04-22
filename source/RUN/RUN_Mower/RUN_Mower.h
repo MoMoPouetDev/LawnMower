@@ -28,6 +28,8 @@ uint8_t RUN_Mower_RunMower(void);
 void RUN_Mower_SonarDistance(void);
 void RUN_Mower_TiltProtection(void);
 uint8_t RUN_Mower_WireDetection(void);
+uint8_t RUN_Mower_WireDetectionOnReturn(void);
 uint8_t RUN_Mower_BumperDetection(void);
+uint8_t RUN_Mower_DirectionFromBase(void);
 
 #endif /* RUN_RUN_MOWER_RUN_MOWER_H_ */

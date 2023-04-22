@@ -23,11 +23,11 @@
 /*--------------------------------------------------------------------------*/
 /* ... DATAS TYPE ...                                                       */
 /*--------------------------------------------------------------------------*/
-uint8_t gu8_startButtonState;
-uint8_t gu8_stopButtonState;
-uint8_t gu8_runMowerState;
-uint8_t gu8_wireDetectionState;
-uint8_t gu8_bumperDetectionState;
+static uint8_t gu8_startButtonState;
+static uint8_t gu8_stopButtonState;
+static uint8_t gu8_runMowerState;
+static uint8_t gu8_wireDetectionState;
+static uint8_t gu8_bumperDetectionState;
 static uint8_t gu8_timeToMow;
 static int8_t gs8_charge;
 static Etat ge_rain;

@@ -9,6 +9,7 @@
 /* ... INCLUDES ...                                                         */
 /*--------------------------------------------------------------------------*/
 #include "RUN_Init.h"
+#include "RUN_ADC.h"
 #include "RUN_BLE.h"
 #include "RUN_GPIO.h"
 #include "RUN_GPS.h"
@@ -30,6 +31,12 @@ S_MOWER_FSM_STATE ge_FSM_Phase;
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
+void FSM_Main_GpsAcquisition(uint32_t u32_CyclicTask);
+void FSM_Main_UpdateLed(uint32_t u32_CyclicTask);
+void FSM_Main_GetAngles(uint32_t u32_CyclicTask);
+void FSM_Main_ADCRead(uint32_t u32_CyclicTask);
+void FSM_Main_SendStatus(uint32_t u32_CyclicTask);
+void FSM_Main_TiltProtection(uint32_t u32_CyclicTask);
 void FSM_Main_UpdateFsmMower(void);
 /*---------------------------------------------------------------------------*/
 /* ... FUNCTIONS DEFINITIONS...                                              */
@@ -137,7 +144,7 @@ void FSM_Main_ADCRead(uint32_t u32_CyclicTask)
 void FSM_Main_SendStatus(uint32_t u32_CyclicTask)
 {
 	if ( (u32_CyclicTask & CYCLIC_TASK_BLE_SEND_STATUS) != 0) {
-		RUN_BLE_SendValue();
+		RUN_BLE_SendStatus();
 		RUN_Task_EraseCyclicTask(CYCLIC_TASK_BLE_SEND_STATUS);
 	}
 }

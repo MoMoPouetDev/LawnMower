@@ -16,6 +16,6 @@
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
 void RUN_GPS_Init(void);
-void RUN_BLE_SendStatus(void);
+void RUN_GPS_GpsAcquisition(void);
 
 #endif /* RUN_RUN_GPS_RUN_GPS_H_ */

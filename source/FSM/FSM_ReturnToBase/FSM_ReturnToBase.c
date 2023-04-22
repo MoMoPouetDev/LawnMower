@@ -10,6 +10,7 @@
 /*--------------------------------------------------------------------------*/
 #include "HAL_GPIO.h"
 #include "RUN_Mower.h"
+#include "RUN_Sensors.h"
 #include "RUN_Task.h"
 #include "RUN_Task_Interface.h"
 
@@ -19,9 +20,9 @@
 /*--------------------------------------------------------------------------*/
 /* ... DATAS TYPE ...                                                       */
 /*--------------------------------------------------------------------------*/
-uint8_t gu8_angleToBaseState;
-uint8_t gu8_wireDetectionState;
-uint8_t gu8_bumperDetectionState;
+static uint8_t gu8_angleToBaseState;
+static uint8_t gu8_wireDetectionState;
+static uint8_t gu8_bumperDetectionState;
 static uint8_t gu8_runMowerState;
 static uint8_t gu8_timeToMow;
 static int8_t gs8_charge;
@@ -29,7 +30,12 @@ static Etat ge_rain;
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
-
+void FSM_ReturnToBase_SonarDistance(uint32_t u32_CyclicTask);
+void FSM_ReturnToBase_GetAngleToBase(uint32_t u32_CyclicTask);
+void FSM_ReturnToBase_SensorRead(uint32_t u32_CyclicTask);
+void FSM_ReturnToBase_RunMower(uint32_t u32_CyclicTask);
+void FSM_ReturnToBase_WireDetection(uint32_t u32_CyclicTask);
+void FSM_ReturnToBase_BumperDetection(uint32_t u32_CyclicTask);
 /*---------------------------------------------------------------------------*/
 /* ... FUNCTIONS DEFINITIONS...                                              */
 /*---------------------------------------------------------------------------*/
@@ -104,16 +110,16 @@ void FSM_ReturnToBase(S_MOWER_FSM_STATE e_FSM_ReturnToBase_State)
 
 			if (gu8_wireDetectionState == 1)
 			{
-				FSM_Enum_SetFsmPhase(S_SUP_OPERATIVE_Moving);
+				FSM_Enum_SetFsmPhase(S_SUP_RETURN_TO_BASE_Wire_Guiding);
 			}
 			else if (gu8_wireDetectionState == 2)
 			{
-				FSM_Enum_SetFsmPhase(S_SUP_OPERATIVE_Bumper_Detection);
+				FSM_Enum_SetFsmPhase(S_SUP_RETURN_TO_BASE_Bumper_Detection);
 			}
 
 		 	break;
 	  	case S_SUP_RETURN_TO_BASE_Bumper_Detection :
-			FSM_Operative_BumperDetection(u32_CyclicTask);
+			FSM_ReturnToBase_BumperDetection(u32_CyclicTask);
 
 			if (gu8_bumperDetectionState == 1)
 			{
@@ -122,7 +128,7 @@ void FSM_ReturnToBase(S_MOWER_FSM_STATE e_FSM_ReturnToBase_State)
 
 		 	break;
 	  	case S_SUP_RETURN_TO_BASE_Wire_Guiding:
-		 /* Insert init code */
+		 	FSM_ReturnToBase_WireGuiding(u32_CyclicTask);
 
 		 	break;
 	  	case S_SUP_RETURN_TO_BASE_Wainting_For_Docking :
@@ -181,3 +187,4 @@ void FSM_ReturnToBase_BumperDetection(uint32_t u32_CyclicTask)
 		RUN_Task_EraseCyclicTask(CYCLIC_TASK_BUMPER_DETECTION);
 	}
 }
+

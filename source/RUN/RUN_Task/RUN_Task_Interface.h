@@ -28,6 +28,9 @@
 #define CYCLIC_TASK_TILT_PROTECTION		0x00000100
 #define CYCLIC_TASK_WIRE_DETECTION		0x00000200
 #define CYCLIC_TASK_BUMPER_DETECTION	0x00000400
+#define CYCLIC_TASK_GPS_ACQUISITION		0x00000800
+#define CYCLIC_TASK_UPDATE_LED			0x00001000
+#define CYCLIC_TASK_BLE_SEND_STATUS		0x00002000
 
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
