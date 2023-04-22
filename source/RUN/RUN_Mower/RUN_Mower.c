@@ -16,6 +16,7 @@
 #include "HAL_Timer.h"
 #include "HAL_Sonar.h"
 #include "HAL_GPIO.h"
+#include "HAL_GPS.h"
 #include "RUN_PWM.h"
 #include "RUN_Mower.h"
 
@@ -34,6 +35,9 @@
 
 #define GPT_ONE_SECOND 100
 #define GPT_FIVE_SECOND 500
+
+#define COORDINATES_BASE_LAT 49.2315928
+#define COORDINATES_BASE_LONG 1.2470619
 
 uint8_t gu8_deltaAngle;
 static uint8_t gu8_distanceSonarFC;
@@ -162,15 +166,18 @@ void RUN_Mower_GetAngles()
 	}
 }
 
-void HAL_Mower_GetAzimut() 
+void RUN_Mower_GetAzimut() 
 {
+	float f_latitude;
+	float f_longitude;
 	float x = 0.0;
 	float y = 0.0;
 
-	MOWER_getCoordinates(&latitude, &longitude);
+
+	HAL_GPS_GetCoordinates(&f_latitude, &f_longitude);
 	
-	x = cos(latitude)*sin(COORDINATES_BASE_LAT) - sin(latitude)*cos(COORDINATES_BASE_LAT)*cos(COORDINATES_BASE_LONG-longitude);
-	y = sin(COORDINATES_BASE_LONG-longitude)*cos(COORDINATES_BASE_LAT);
+	x = cos(f_latitude)*sin(COORDINATES_BASE_LAT) - sin(f_latitude)*cos(COORDINATES_BASE_LAT)*cos(COORDINATES_BASE_LONG-f_longitude);
+	y = sin(COORDINATES_BASE_LONG-f_longitude)*cos(COORDINATES_BASE_LAT);
 	
 	gu16_azimut = 2*atan(y / (sqrt(x*x + y*y) + x));
 }
@@ -245,6 +252,87 @@ uint8_t RUN_Mower_WireDetection()
 			else
 			{
 				_u16_cptValue++;
+			}
+			
+			break;
+		case 2 :
+			if ( (gu16_currentAngle > ((_u16_endAngle - gu8_deltaAngle)%360)) && (gu16_currentAngle < ((_u16_endAngle + gu8_deltaAngle)%360)) )
+			{
+				_u8_wireState = 3;
+			}
+			else
+			{
+				gu16_distanceWireRight = HAL_ADC_GetRightWireValue();
+				gu16_distanceWireLeft = HAL_ADC_GetLeftWireValue();
+
+				u8_leftBumperState = HAL_GPIO_GetFlagBumper(E_LEFT_BUMPER);
+				u8_centerBumperState = HAL_GPIO_GetFlagBumper(E_CENTER_BUMPER);
+				u8_rightBumperState = HAL_GPIO_GetFlagBumper(E_RIGHT_BUMPER);
+
+				if ( (u8_leftBumperState == 1) || (u8_centerBumperState == 1) || (u8_rightBumperState == 1) )
+				{
+					RUN_PWM_Stop();
+					_u8_wireState = 0;
+					u8_returnValue = 2;
+				}
+				else if ((gu16_distanceWireLeft > WIRE_DETECTION_LIMITE) || (gu16_distanceWireRight > WIRE_DETECTION_LIMITE) )
+				{
+					_u8_wireState = 0;
+				}
+			}
+
+			break;
+		case 3 :
+			RUN_PWM_Stop();
+			_u8_wireState = 0;
+			u8_returnValue = 1;
+
+			break;
+    }
+	return u8_returnValue;
+}
+
+uint8_t RUN_Mower_WireDetectionOnReturn()
+{
+	static uint8_t _u8_wireState = 0;
+	static uint8_t _u8_wireValue = 0;
+	uint8_t u8_leftBumperState = 0;
+	uint8_t u8_centerBumperState = 0;
+	uint8_t u8_rightBumperState = 0;
+	uint8_t u8_returnValue = 0;
+
+	switch(_u8_wireState)
+   	{
+		default:
+	  	case 0:			
+			if ( (gu16_distanceWireLeft > WIRE_DETECTION_LIMITE))
+			{
+				_u8_wireValue = 1;
+			}
+			else if (gu16_distanceWireRight > WIRE_DETECTION_LIMITE)
+			{
+				_u8_wireValue = 2;
+			}
+			_u8_wireState = 1;
+			
+			break;
+		case 1:
+			if (_u8_wireValue == 1)
+			{
+				RUN_PWM_Stop();
+				_u8_wireState = 0;
+				u8_returnValue = 1;
+			}
+			else if (_u8_wireValue == 2)
+			{
+				RUN_PWM_Stop();
+				RUN_PWM_Left();
+				_u8_wireState = 2;
+			}
+			else
+			{
+				_u8_wireState = 0;
+				u8_returnValue = 1;
 			}
 			
 			break;
@@ -365,12 +453,16 @@ uint8_t RUN_Mower_DirectionFromBase()
 	static uint16_t _u16_angleFromNorth = 0;
 	static uint16_t _u16_angleFromBase = 0;//MOWER_getAzimut(angleFromNorth);
 	static uint8_t _u8_baseState = 0;
+	uint8_t u8_leftBumperState = 0;
+	uint8_t u8_centerBumperState = 0;
+	uint8_t u8_rightBumperState = 0;
 	uint8_t u8_retunValue = 0;
 	
 	switch (_u8_baseState)
 	{
 		case 0:
 			_u16_angleFromNorth = gu16_currentAngle;
+			HAL_Mower_GetAzimut();
 			_u16_angleFromBase = gu16_azimut;
 			RUN_PWM_Right();
 
@@ -383,8 +475,8 @@ uint8_t RUN_Mower_DirectionFromBase()
 			}
 			else
 			{
-				gu32_distanceWireRight = HAL_ADC_GetRightWireValue();
-				gu32_distanceWireLeft = HAL_ADC_GetLeftWireValue();
+				gu16_distanceWireRight = HAL_ADC_GetRightWireValue();
+				gu16_distanceWireLeft = HAL_ADC_GetLeftWireValue();
 
 				u8_leftBumperState = HAL_GPIO_GetFlagBumper(E_LEFT_BUMPER);
 				u8_centerBumperState = HAL_GPIO_GetFlagBumper(E_CENTER_BUMPER);
@@ -396,7 +488,7 @@ uint8_t RUN_Mower_DirectionFromBase()
 					_u8_baseState = 0;
 					u8_retunValue = 2;
 				}
-				else if ((gu32_distanceWireLeft > WIRE_DETECTION_LIMITE) || (gu32_distanceWireRight > WIRE_DETECTION_LIMITE) )
+				else if ((gu16_distanceWireLeft > WIRE_DETECTION_LIMITE) || (gu16_distanceWireRight > WIRE_DETECTION_LIMITE) )
 				{
 					RUN_PWM_Stop();
 					_u8_baseState = 0;

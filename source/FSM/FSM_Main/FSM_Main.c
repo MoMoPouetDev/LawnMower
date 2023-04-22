@@ -9,7 +9,12 @@
 /* ... INCLUDES ...                                                         */
 /*--------------------------------------------------------------------------*/
 #include "RUN_Init.h"
+#include "RUN_BLE.h"
+#include "RUN_GPIO.h"
+#include "RUN_GPS.h"
+#include "RUN_Mower.h"
 #include "RUN_Task.h"
+#include "RUN_Task_Interface.h"
 
 #include "FSM_Enum.h"
 #include "FSM_Dock.h"
@@ -54,14 +59,19 @@ void FSM_Main( void )
 {
    while(1)
    {
-      /***************************************************************************************************************/
-      /*                                      MANAGE GLOBALE CYCLE TASK FUNCTION                                     */
-      /***************************************************************************************************************/
-		//HAL_GPS_startGpsAcquisition()
-		//HAL_GPIO_UpdateLed()
-		//RUN_Mower_GetAngles()
-		//FSM_Dock_ADCReadValue(u32_CyclicTask);
-		//RUN_BLE
+		uint32_t u32_CyclicTask;
+	/***************************************************************************************************************/
+	/*                                      MANAGE RUN TASK CYCLE                                                  */
+	/***************************************************************************************************************/
+
+		u32_CyclicTask = RUN_Task_GetCyclicTask();
+		
+		FSM_Main_GpsAcquisition(u32_CyclicTask);
+		FSM_Main_UpdateLed(u32_CyclicTask);
+		FSM_Main_GetAngles(u32_CyclicTask);
+		FSM_Main_ADCRead(u32_CyclicTask);
+		FSM_Main_SendStatus(u32_CyclicTask);
+		FSM_Main_TiltProtection(u32_CyclicTask);
       /***************************************************************************************************************/
       /*                                   FINITE STATE MACHINE                                                      */
       /***************************************************************************************************************/
@@ -90,4 +100,52 @@ void FSM_Main( void )
 void FSM_Main_UpdateFsmMower()
 {
 	ge_FSM_Phase = FSM_Enum_GetFsmPhase();
+}
+
+void FSM_Main_GpsAcquisition(uint32_t u32_CyclicTask)
+{
+	if ( (u32_CyclicTask & CYCLIC_TASK_GPS_ACQUISITION) != 0) {
+		RUN_GPS_GpsAcquisition();
+		RUN_Task_EraseCyclicTask(CYCLIC_TASK_GPS_ACQUISITION);
+	}
+}
+
+void FSM_Main_UpdateLed(uint32_t u32_CyclicTask)
+{
+	if ( (u32_CyclicTask & CYCLIC_TASK_UPDATE_LED) != 0) {
+		RUN_GPIO_UpdateLed();
+		RUN_Task_EraseCyclicTask(CYCLIC_TASK_UPDATE_LED);
+	}
+}
+
+void FSM_Main_GetAngles(uint32_t u32_CyclicTask)
+{
+	if ( (u32_CyclicTask & CYCLIC_TASK_ANGLE_READ) != 0) {
+		RUN_Mower_GetAngles();
+		RUN_Task_EraseCyclicTask(CYCLIC_TASK_ANGLE_READ);
+	}
+}
+
+void FSM_Main_ADCRead(uint32_t u32_CyclicTask)
+{
+	if ( (u32_CyclicTask & CYCLIC_TASK_ADC_READ_VALUE) != 0) {
+		RUN_ADC_ReadValue();
+		RUN_Task_EraseCyclicTask(CYCLIC_TASK_ADC_READ_VALUE);
+	}
+}
+
+void FSM_Main_SendStatus(uint32_t u32_CyclicTask)
+{
+	if ( (u32_CyclicTask & CYCLIC_TASK_BLE_SEND_STATUS) != 0) {
+		RUN_BLE_SendValue();
+		RUN_Task_EraseCyclicTask(CYCLIC_TASK_BLE_SEND_STATUS);
+	}
+}
+
+void FSM_Main_TiltProtection(uint32_t u32_CyclicTask)
+{
+	if ( (u32_CyclicTask & CYCLIC_TASK_TILT_PROTECTION) != 0) {
+		RUN_Mower_TiltProtection();
+		RUN_Task_EraseCyclicTask(CYCLIC_TASK_TILT_PROTECTION);
+	}
 }

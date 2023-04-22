@@ -28,15 +28,13 @@ uint8_t gu8_stopButtonState;
 uint8_t gu8_runMowerState;
 uint8_t gu8_wireDetectionState;
 uint8_t gu8_bumperDetectionState;
-uint8_t gu8_timeToMow;
-int8_t gs8_charge;
+static uint8_t gu8_timeToMow;
+static int8_t gs8_charge;
 static Etat ge_rain;
 
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
-void FSM_Operative_ADCReadValue(uint32_t u32_CyclicTask);
-void FSM_Operative_AnglesRead(uint32_t u32_CyclicTask);
 void FSM_Operative_SonarDistance(uint32_t u32_CyclicTask);
 void FSM_Operative_SensorRead(uint32_t u32_CyclicTask);
 void FSM_Operative_TiltProtection(uint32_t u32_CyclicTask);
@@ -66,7 +64,6 @@ void FSM_Operative(S_MOWER_FSM_STATE e_FSM_Operative_State)
 	/***************************************************************************************************************/
 	/*                                      MANAGE RUN TASK CYCLE                                                  */
 	/***************************************************************************************************************/
-
 	u32_CyclicTask = RUN_Task_GetCyclicTask();
 
 	/***************************************************************************************************************/
@@ -83,12 +80,8 @@ void FSM_Operative(S_MOWER_FSM_STATE e_FSM_Operative_State)
 
 			break;
 	  	case S_SUP_OPERATIVE_Moving :
-
-			FSM_Operative_ADCReadValue(u32_CyclicTask);
-			FSM_Operative_AnglesRead(u32_CyclicTask);
 			FSM_Operative_SonarDistance(u32_CyclicTask);
 			FSM_Operative_SensorRead(u32_CyclicTask);
-			FSM_Operative_TiltProtection(u32_CyclicTask);
 
 			FSM_Operative_RunMower(u32_CyclicTask);	
 			
@@ -126,10 +119,7 @@ void FSM_Operative(S_MOWER_FSM_STATE e_FSM_Operative_State)
 			
 			break;
 	  	case S_SUP_OPERATIVE_Wire_Detection :
-			FSM_Operative_ADCReadValue(u32_CyclicTask);
-			FSM_Operative_AnglesRead(u32_CyclicTask);
 			FSM_Operative_SonarDistance(u32_CyclicTask);
-			FSM_Operative_TiltProtection(u32_CyclicTask);
 
 			FSM_Operative_WireDetection(u32_CyclicTask);
 
@@ -144,10 +134,7 @@ void FSM_Operative(S_MOWER_FSM_STATE e_FSM_Operative_State)
 			
 		 	break;
 	  	case S_SUP_OPERATIVE_Bumper_Detection:
-			FSM_Operative_ADCReadValue(u32_CyclicTask);
-			FSM_Operative_AnglesRead(u32_CyclicTask);
 			FSM_Operative_SonarDistance(u32_CyclicTask);
-			FSM_Operative_TiltProtection(u32_CyclicTask);
 
 			FSM_Operative_BumperDetection(u32_CyclicTask);
 
@@ -182,22 +169,6 @@ void FSM_Operative(S_MOWER_FSM_STATE e_FSM_Operative_State)
 
 			break;
    	}
-}
-
-void FSM_Operative_ADCReadValue(uint32_t u32_CyclicTask)
-{
-	if ( (u32_CyclicTask & CYCLIC_TASK_ADC_READ_VALUE) != 0) {
-		RUN_ADC_ReadValue();
-		RUN_Task_EraseCyclicTask(CYCLIC_TASK_ADC_READ_VALUE);
-	}
-}
-
-void FSM_Operative_AnglesRead(uint32_t u32_CyclicTask)
-{
-	if ( (u32_CyclicTask & CYCLIC_TASK_ANGLE_READ) != 0) {
-		RUN_Mower_GetAngles();
-		RUN_Task_EraseCyclicTask(CYCLIC_TASK_ANGLE_READ);
-	}
 }
 
 void FSM_Operative_SonarDistance(uint32_t u32_CyclicTask)
@@ -239,14 +210,6 @@ void FSM_Operative_GetFlagStopButton(uint32_t u32_CyclicTask)
 	if ( (u32_CyclicTask & CYCLIC_TASK_READ_STOP_BUTTON) != 0) {
 		gu8_stopButtonState = RUN_GPIO_GetStopButton();
 		RUN_Task_EraseCyclicTask(CYCLIC_TASK_READ_STOP_BUTTON);
-	}
-}
-
-void FSM_Operative_TiltProtection(uint32_t u32_CyclicTask)
-{
-	if ( (u32_CyclicTask & CYCLIC_TASK_TILT_PROTECTION) != 0) {
-		RUN_Mower_TiltProtection();
-		RUN_Task_EraseCyclicTask(CYCLIC_TASK_TILT_PROTECTION);
 	}
 }
 

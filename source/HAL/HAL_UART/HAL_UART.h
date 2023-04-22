@@ -24,5 +24,6 @@
 /*--------------------------------------------------------------------------*/
 void HAL_UART_Init(void);
 uint8_t HAL_UART_ReceptionGPS(char* tu8_RxBuffer, uint8_t u8_size);
+void HAL_UART_BleInit(void);
 
 #endif /* HAL_HAL_UART_HAL_UART_H_ */
