@@ -13,6 +13,7 @@
         "run_pwm.h": "c",
         "run_mower.h": "c",
         "hal_sonar.h": "c",
-        "run_gpio.h": "c"
+        "run_gpio.h": "c",
+        "run_task_interface.h": "c"
     }
 }

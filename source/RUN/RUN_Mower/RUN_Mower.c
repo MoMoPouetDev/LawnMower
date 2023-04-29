@@ -531,12 +531,53 @@ uint8_t RUN_Mower_RunMower()
 	}
 	else if ((gu8_distanceSonarFC < SONAR_WARN) || (gu8_distanceSonarFL < SONAR_WARN) || (gu8_distanceSonarFR < SONAR_WARN))
 	{
-		RUN_PWM_Forward(MIDDLE_SPEED);
+		RUN_PWM_Forward(MIDDLE_SPEED, MIDDLE_SPEED);
 	}
 	else 
 	{
-		RUN_PWM_Forward(HIGH_SPEED);
+		RUN_PWM_Forward(HIGH_SPEED, HIGH_SPEED);
 	}
 
 	return u8_returnValue;
+}
+
+uint8_t RUN_Mower_WireGuiding()
+{
+	uint8_t u8_returnValue = 0;
+	float f_Kp = 0.2;
+			
+	uint16_t u16_errorPosition = 0;
+	float f_wirePwm = 0;
+	
+	gu16_distanceWireLeft = HAL_ADC_GetLeftWireValue();
+
+	u16_errorPosition = WIRE_DETECTION_LOAD - gu16_distanceWireLeft;
+	f_wirePwm = (f_Kp*(float)u16_errorPosition);
+	
+	if(f_wirePwm > MIDDLE_SPEED) {
+		f_wirePwm = MIDDLE_SPEED;
+	}
+	else if(f_wirePwm < -MIDDLE_SPEED) {
+		f_wirePwm = -MIDDLE_SPEED;
+	}
+	
+	if(f_wirePwm > 0) 
+	{
+		RUN_PWM_Forward(MIDDLE_SPEED - f_wirePwm, MIDDLE_SPEED);
+	}
+	else if(f_wirePwm < 0) 
+	{
+		RUN_PWM_Forward(MIDDLE_SPEED, MIDDLE_SPEED - f_wirePwm);
+	}
+	else 
+	{
+		RUN_PWM_Forward(MIDDLE_SPEED, MIDDLE_SPEED);
+	}	
+
+	if ( (gu16_distanceWireLeft > WIRE_DETECTION_UNLOAD) && (gu16_distanceWireLeft < WIRE_DETECTION_LOAD) )
+	{
+		u8_returnValue = 1;
+	}
+
+	return u8_returnValue;	
 }

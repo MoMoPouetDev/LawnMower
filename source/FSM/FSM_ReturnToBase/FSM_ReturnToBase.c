@@ -24,6 +24,7 @@ static uint8_t gu8_angleToBaseState;
 static uint8_t gu8_wireDetectionState;
 static uint8_t gu8_bumperDetectionState;
 static uint8_t gu8_runMowerState;
+static uint8_t gu8_wireGuidingState;
 static uint8_t gu8_timeToMow;
 static int8_t gs8_charge;
 static Etat ge_rain;
@@ -36,6 +37,7 @@ void FSM_ReturnToBase_SensorRead(uint32_t u32_CyclicTask);
 void FSM_ReturnToBase_RunMower(uint32_t u32_CyclicTask);
 void FSM_ReturnToBase_WireDetection(uint32_t u32_CyclicTask);
 void FSM_ReturnToBase_BumperDetection(uint32_t u32_CyclicTask);
+void FSM_ReturnToBase_WireGuiding(uint32_t u32_CyclicTask);
 /*---------------------------------------------------------------------------*/
 /* ... FUNCTIONS DEFINITIONS...                                              */
 /*---------------------------------------------------------------------------*/
@@ -45,6 +47,7 @@ void FSM_ReturnToBase_Init()
 	gu8_runMowerState = 0;
 	gu8_wireDetectionState = 0;
 	gu8_bumperDetectionState = 0;
+	gu8_wireGuidingState = 0;
 	gu8_timeToMow = 0;
 	gs8_charge = 0;
 	ge_rain = OFF;
@@ -130,6 +133,12 @@ void FSM_ReturnToBase(S_MOWER_FSM_STATE e_FSM_ReturnToBase_State)
 	  	case S_SUP_RETURN_TO_BASE_Wire_Guiding:
 		 	FSM_ReturnToBase_WireGuiding(u32_CyclicTask);
 
+			if (gu8_wireGuidingState == 0)
+			{
+				FSM_Enum_SetFsmPhase(S_SUP_RETURN_TO_BASE_Angle_To_Base);
+			}
+			
+
 		 	break;
 	  	case S_SUP_RETURN_TO_BASE_Wainting_For_Docking :
 		  /* Insert init code */
@@ -188,3 +197,10 @@ void FSM_ReturnToBase_BumperDetection(uint32_t u32_CyclicTask)
 	}
 }
 
+void FSM_ReturnToBase_WireGuiding(uint32_t u32_CyclicTask)
+{
+	if ( (u32_CyclicTask & CYCLIC_TASK_WIRE_GUIDING) != 0) {
+		gu8_wireGuidingState = RUN_Mower_WireGuiding();
+		RUN_Task_EraseCyclicTask(CYCLIC_TASK_WIRE_GUIDING);
+	}
+}

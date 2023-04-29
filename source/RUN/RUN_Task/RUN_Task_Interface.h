@@ -15,7 +15,7 @@
 /*--------------------------------------------------------------------------*/
 /* ... DATATYPES ...                                                        */
 /*--------------------------------------------------------------------------*/
-#define NB_SLOT_CYCLIC_TASK 10u
+#define NB_SLOT_CYCLIC_TASK 20u
 
 #define CYCLIC_TASK_ADC_READ_VALUE	    0x00000001
 #define CYCLIC_TASK_LEAVE_DOCK  	    0x00000002
@@ -31,6 +31,7 @@
 #define CYCLIC_TASK_GPS_ACQUISITION		0x00000800
 #define CYCLIC_TASK_UPDATE_LED			0x00001000
 #define CYCLIC_TASK_BLE_SEND_STATUS		0x00002000
+#define CYCLIC_TASK_WIRE_GUIDING        0x00004000
 
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */

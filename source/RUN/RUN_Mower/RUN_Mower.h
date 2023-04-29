@@ -31,5 +31,6 @@ uint8_t RUN_Mower_WireDetection(void);
 uint8_t RUN_Mower_WireDetectionOnReturn(void);
 uint8_t RUN_Mower_BumperDetection(void);
 uint8_t RUN_Mower_DirectionFromBase(void);
+uint8_t RUN_Mower_WireGuiding(void);
 
 #endif /* RUN_RUN_MOWER_RUN_MOWER_H_ */
