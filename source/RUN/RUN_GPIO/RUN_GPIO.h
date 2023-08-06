@@ -27,5 +27,6 @@ void RUN_GPIO_SetErrorMowerNtr(void);
 void RUN_GPIO_SetErrorMowerRain(void);
 uint8_t RUN_GPIO_GetStartButton(void);
 uint8_t RUN_GPIO_GetStopButton(void);
+void RUN_GPIO_UpdateLed(void);
 
 #endif /* RUN_RUN_GPIO_RUN_GPIO_H_ */
