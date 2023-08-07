@@ -18,6 +18,7 @@
 /* ... DATATYPES ...                                                        */
 /*--------------------------------------------------------------------------*/
 static Etat ge_rain;
+static Etat ge_dock;
 
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
@@ -28,9 +29,9 @@ uint8_t RUN_Sensors_GetBatteryPercent(void);
 /*--------------------------------------------------------------------------*/
 void RUN_Sensors_Init()
 {
-	ge_rain = ON;
+	ge_rain = OFF;
+	ge_dock = OFF;
 
-	HAL_GPS_Init();
 	HAL_Sonar_Init();
 }
 
@@ -58,11 +59,11 @@ uint8_t RUN_Sensors_IsCharging()
 
 	if (u8_chargeValue <= CHARGING_THRESHOLD)
 	{
-		u8_returnValue = 1;
+		u8_returnValue = 0;
 	}
 	else
 	{
-		u8_returnValue = 0;
+		u8_returnValue = 1;
 	}
 
 	return u8_returnValue;
@@ -155,4 +156,14 @@ Etat RUN_Sensors_GetRainState()
 void RUN_Sensors_SetRainState(Etat e_rainState)
 {
 	ge_rain = e_rainState;
+}
+
+Etat RUN_Sensors_GetDockState()
+{
+	return ge_dock;
+}
+
+void RUN_Sensors_SetDockState(Etat e_dockState)
+{
+	ge_dock = e_dockState;
 }

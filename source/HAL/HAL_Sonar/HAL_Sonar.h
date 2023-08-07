@@ -23,8 +23,10 @@
 #define TIMER1_OVERFLOW 65535
 /*** Calcul of value timer 343 m/s -> 34300 cm/s
  dist = (speedSound*TIMER)/2 = (34300*TIMER)/2 = 17150*TIMER = 17150 * (TIMER_VALUE * 0.125 * 10^-6)
+ dist = (speedSound*TIMER)/2 = (34300*TIMER)/2 = 17150*TIMER = 17150 * (TIMER_VALUE * 0.017 * 10^-6)
  ***/
-#define TIMER_DISTANCE 466.47
+//#define TIMER_DISTANCE 466.47 8MHz
+#define TIMER_DISTANCE 29.15 //60MHz
 #define THRESHOLD_8_BITS 0xFE
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */

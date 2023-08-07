@@ -23,8 +23,8 @@ typedef enum
     E_ORANGE_LED                    = LLD_GPIO_B0_01,
     E_RED_LED                       = LLD_GPIO_B0_02,
     E_YELLOW_ONE_LED                = LLD_GPIO_B0_03,
-    E_YELLOW_TWO_LED                = LLD_GPIO_B0_04,
-    E_YELLOW_THREE_LED              = LLD_GPIO_B0_05,
+    E_YELLOW_TWO_LED                = LLD_GPIO_B0_08,
+    E_YELLOW_THREE_LED              = LLD_GPIO_B0_09,
 
     E_STOP_BUTTON                   = LLD_GPIO_B1_00,
     E_START_BUTTON                  = LLD_GPIO_B1_01,
@@ -118,6 +118,8 @@ void HAL_GPIO_Init(void);
 void HAL_GPIO_UpdateLed(void);
 void HAL_GPIO_SetEtatMower(EtatMower);
 void HAL_GPIO_SetErrorMower(ErrorMower);
+EtatMower HAL_GPIO_GetEtatMower(void);
+ErrorMower HAL_GPIO_GetErrorMower(void);
 void HAL_GPIO_WritePinSonar(uint8_t u8_sonarID, uint8_t u8_pinValue);
 uint8_t HAL_GPIO_GetEchoState(void);
 uint32_t HAL_GPIO_GetTimerValue(void);

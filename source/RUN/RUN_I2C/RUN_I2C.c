@@ -26,4 +26,6 @@
 void RUN_I2C_Init()
 {
 	HAL_I2C_Init();
+	HAL_I2C_AccelInit();
+	HAL_I2C_CompassInit();
 }

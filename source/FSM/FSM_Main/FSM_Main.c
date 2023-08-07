@@ -80,8 +80,13 @@ void FSM_Main( void )
 		FSM_Main_SendStatus(u32_CyclicTask);
 		FSM_Main_TiltProtection(u32_CyclicTask);
       /***************************************************************************************************************/
-      /*                                   FINITE STATE MACHINE                                                      */
+      /*                                  DEBUG                                                   */
       /***************************************************************************************************************/
+		FSM_TEST_SonarDistance(u32_CyclicTask);
+
+	  /***************************************************************************************************************/
+	  /*                                   FINITE STATE MACHINE                                                      */
+	  /***************************************************************************************************************/
 
 
 		if ( (ge_FSM_Phase >= PHASE_DOCK_INIT) && (ge_FSM_Phase <= PHASE_DOCK_WAITING_FOR_LEAVING_DOCK))
@@ -154,5 +159,13 @@ void FSM_Main_TiltProtection(uint32_t u32_CyclicTask)
 	if ( (u32_CyclicTask & CYCLIC_TASK_TILT_PROTECTION) != 0) {
 		RUN_Mower_TiltProtection();
 		RUN_Task_EraseCyclicTask(CYCLIC_TASK_TILT_PROTECTION);
+	}
+}
+
+void FSM_TEST_SonarDistance(uint32_t u32_CyclicTask)
+{
+	if ( (u32_CyclicTask & CYCLIC_TASK_SONAR) != 0) {
+
+		RUN_Task_EraseCyclicTask(CYCLIC_TASK_SONAR);
 	}
 }

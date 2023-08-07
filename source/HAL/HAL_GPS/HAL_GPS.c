@@ -104,43 +104,24 @@ void HAL_GPS_initDataRmc(DataNmea_RMC *pNmeaRmc) {
 }
 
 uint8_t HAL_GPS_getNmeaUart(BufferNmea *pBuffer, DataNmea_RMC *pNmeaRmc) {
-	uint8_t _bTrameNmeaUart = 0;
 	uint8_t _bTrameNmeaBuffer = 0;
 	uint8_t _bDecodeNmeaBuffer = 0;
 	uint8_t _cUartRxCounter = 0;
     uint8_t u8_returnValueUART = 0;
 	char _tUartRxBuffer[BUFFER_SIZE] = { 0 };
-    char _tBuffer[BUFFER_SIZE] = { 0 };
 	
     u8_returnValueUART = HAL_UART_ReceptionGPS(_tUartRxBuffer, BUFFER_SIZE);
-
-    if (u8_returnValueUART)
-    {
-        _tBuffer[0] = '$';
-
-        for(_cUartRxCounter = 0; _cUartRxCounter < (BUFFER_SIZE - 1); _cUartRxCounter++) 
-        {
-            _tBuffer[_cUartRxCounter + 1] = _tUartRxBuffer[_cUartRxCounter];
-
-		    if(_tBuffer[_cUartRxCounter] == '\n') 
-            {
-			    _bTrameNmeaUart = 1;
-			    _cUartRxCounter = 0;
-			    break;
-		    }
-	    }
-    }
 	
-	if(_bTrameNmeaUart) 
+	if(u8_returnValueUART)
     {
-		while(_tBuffer[_cUartRxCounter] != '\n') 
+		while(_tUartRxBuffer[_cUartRxCounter] != '\n')
         {
-			_bTrameNmeaBuffer = HAL_GPS_getNmeaBuffer(pBuffer, _tBuffer[_cUartRxCounter]);
+			_bTrameNmeaBuffer = HAL_GPS_getNmeaBuffer(pBuffer, _tUartRxBuffer[_cUartRxCounter]);
 			_cUartRxCounter++;
 		}
         if(_bTrameNmeaBuffer) 
         {
-            _bTrameNmeaBuffer = HAL_GPS_getNmeaBuffer(pBuffer, _tBuffer[_cUartRxCounter]);
+            _bTrameNmeaBuffer = HAL_GPS_getNmeaBuffer(pBuffer, _tUartRxBuffer[_cUartRxCounter]);
             if(_bTrameNmeaBuffer) {
                 _bDecodeNmeaBuffer = HAL_GPS_decodeNmeaBuffer(pBuffer, pNmeaRmc);
             }
@@ -484,6 +465,21 @@ uint8_t HAL_GPS_GetHours()
     return gu8_hoursGpsAcquisition;
 }
 
+uint8_t HAL_GPS_GetMinutes()
+{
+    return gu8_minutesGpsAcquisition;
+}
+
+uint8_t HAL_GPS_GetDays()
+{
+    return gu8_daysGpsAcquisition;
+}
+
+uint8_t HAL_GPS_GetMonths()
+{
+    return gu8_monthsGpsAcquisition;
+}
+
 void HAL_GPS_GetCoordinates(float* pLatitudeCoordinates, float* pLongitudeCoordinates) 
 {
     uint32_t tempLatDecimal;
@@ -499,4 +495,10 @@ void HAL_GPS_GetCoordinates(float* pLatitudeCoordinates, float* pLongitudeCoordi
     tempLongDecimal = ((uint32_t)gst_longitude.decimalMSB << 16) | ((uint32_t)gst_longitude.decimalB << 8) | ((uint32_t)gst_longitude.decimalLSB);
     sprintf(tempLong, "%d.%d",(int)gst_longitude.minutes, (int)tempLongDecimal);
     *pLongitudeCoordinates = (float)gst_longitude.degrees + (atof(tempLong)/60.0);
+}
+
+void HAL_GPS_GetStructCoordinates(Coordinates* st_latitude, Coordinates* st_longitude)
+{
+    *st_latitude = gst_latitude;
+    *st_longitude = gst_longitude;
 }

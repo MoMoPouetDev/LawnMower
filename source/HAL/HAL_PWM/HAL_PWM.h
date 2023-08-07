@@ -18,8 +18,8 @@
 /* ... DATATYPES ...                                                        */
 /*--------------------------------------------------------------------------*/
 #define MOTOR_LEFT_CHANNEL  LLD_PWM_CHANNEL_A
-#define MOTOR_LEFT_FORWARD LLD_PWM_PWM1_MODULE0
-#define MOTOR_LEFT_BACKWARD LLD_PWM_PWM1_MODULE1
+#define MOTOR_LEFT_FORWARD LLD_PWM_PWM1_MODULE1
+#define MOTOR_LEFT_BACKWARD LLD_PWM_PWM1_MODULE2
 #define MOTOR_RIGHT_CHANNEL  LLD_PWM_CHANNEL_B
 #define MOTOR_RIGHT_FORWARD LLD_PWM_PWM1_MODULE0
 #define MOTOR_RIGHT_BACKWARD LLD_PWM_PWM1_MODULE1

@@ -10,10 +10,12 @@ product: Pins v13.0
 processor: MIMXRT1061xxxxA
 package_id: MIMXRT1061CVL5A
 mcu_data: ksdk2_0
-processor_version: 13.0.1
+processor_version: 13.0.2
+external_user_signals: {}
 pin_labels:
 - {pin_num: M11, pin_signal: GPIO_AD_B0_02, label: 'USB_OTG1_PWR/J24[2]', identifier: SW_RIGHT}
 - {pin_num: F14, pin_signal: GPIO_AD_B0_09, label: 'JTAG_TDI/J21[5]/ENET_RST/J22[5]/USER_LED', identifier: USER_LED}
+power_domains: {NVCC_EMC: '3.3'}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 
@@ -59,8 +61,8 @@ void BOARD_InitPins(void) {
 BOARD_InitI2C:
 - options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
 - pin_list:
-  - {pin_num: H1, peripheral: LPI2C4, signal: SCL, pin_signal: GPIO_EMC_12}
-  - {pin_num: G3, peripheral: LPI2C4, signal: SDA, pin_signal: GPIO_EMC_11}
+  - {pin_num: H1, peripheral: LPI2C4, signal: SCL, pin_signal: GPIO_EMC_12, software_input_on: Enable, pull_up_down_config: Pull_Up_22K_Ohm, open_drain: Enable}
+  - {pin_num: G3, peripheral: LPI2C4, signal: SDA, pin_signal: GPIO_EMC_11, software_input_on: Enable, pull_up_down_config: Pull_Up_22K_Ohm, open_drain: Enable}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 
@@ -73,8 +75,10 @@ BOARD_InitI2C:
 void BOARD_InitI2C(void) {
   CLOCK_EnableClock(kCLOCK_Iomuxc);           
 
-  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_11_LPI2C4_SDA, 0U); 
-  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_12_LPI2C4_SCL, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_11_LPI2C4_SDA, 1U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_12_LPI2C4_SCL, 1U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_EMC_11_LPI2C4_SDA, 0xD8B0U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_EMC_12_LPI2C4_SCL, 0xD8B0U); 
 }
 
 
@@ -83,10 +87,10 @@ void BOARD_InitI2C(void) {
 BOARD_InitADC:
 - options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
 - pin_list:
-  - {pin_num: K10, peripheral: ADC1, signal: 'IN, 12', pin_signal: GPIO_AD_B1_07}
   - {pin_num: H13, peripheral: ADC1, signal: 'IN, 13', pin_signal: GPIO_AD_B1_08}
   - {pin_num: L12, peripheral: ADC2, signal: 'IN, 9', pin_signal: GPIO_AD_B1_04}
   - {pin_num: K12, peripheral: ADC2, signal: 'IN, 10', pin_signal: GPIO_AD_B1_05}
+  - {pin_num: K10, peripheral: ADC1, signal: 'IN, 12', pin_signal: GPIO_AD_B1_07}
   - {pin_num: J12, peripheral: ADC2, signal: 'IN, 11', pin_signal: GPIO_AD_B1_06}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
@@ -133,8 +137,8 @@ BOARD_InitGPIO:
   - {pin_num: E7, peripheral: GPIO2, signal: 'gpio_io, 01', pin_signal: GPIO_B0_01}
   - {pin_num: E8, peripheral: GPIO2, signal: 'gpio_io, 02', pin_signal: GPIO_B0_02}
   - {pin_num: D8, peripheral: GPIO2, signal: 'gpio_io, 03', pin_signal: GPIO_B0_03}
-  - {pin_num: C8, peripheral: GPIO2, signal: 'gpio_io, 04', pin_signal: GPIO_B0_04}
-  - {pin_num: B8, peripheral: GPIO2, signal: 'gpio_io, 05', pin_signal: GPIO_B0_05}
+  - {pin_num: B9, peripheral: GPIO2, signal: 'gpio_io, 08', pin_signal: GPIO_B0_08}
+  - {pin_num: C9, peripheral: GPIO2, signal: 'gpio_io, 09', pin_signal: GPIO_B0_09}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 
@@ -151,8 +155,8 @@ void BOARD_InitGPIO(void) {
   IOMUXC_SetPinMux(IOMUXC_GPIO_B0_01_GPIO2_IO01, 0U); 
   IOMUXC_SetPinMux(IOMUXC_GPIO_B0_02_GPIO2_IO02, 0U); 
   IOMUXC_SetPinMux(IOMUXC_GPIO_B0_03_GPIO2_IO03, 0U); 
-  IOMUXC_SetPinMux(IOMUXC_GPIO_B0_04_GPIO2_IO04, 0U); 
-  IOMUXC_SetPinMux(IOMUXC_GPIO_B0_05_GPIO2_IO05, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_B0_08_GPIO2_IO08, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_B0_09_GPIO2_IO09, 0U); 
   IOMUXC_SetPinMux(IOMUXC_GPIO_B1_00_GPIO2_IO16, 0U); 
   IOMUXC_SetPinMux(IOMUXC_GPIO_B1_01_GPIO2_IO17, 0U); 
   IOMUXC_SetPinMux(IOMUXC_GPIO_B1_02_GPIO2_IO18, 0U); 
@@ -181,10 +185,10 @@ void BOARD_InitGPIO(void) {
 BOARD_InitUART:
 - options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
 - pin_list:
-  - {pin_num: A6, peripheral: LPUART3, signal: TX, pin_signal: GPIO_EMC_13}
-  - {pin_num: B6, peripheral: LPUART3, signal: RX, pin_signal: GPIO_EMC_14}
-  - {pin_num: A3, peripheral: LPUART4, signal: RX, pin_signal: GPIO_EMC_20}
-  - {pin_num: B4, peripheral: LPUART4, signal: TX, pin_signal: GPIO_EMC_19}
+  - {pin_num: A6, peripheral: LPUART3, signal: TX, pin_signal: GPIO_EMC_13, software_input_on: Enable, open_drain: Enable}
+  - {pin_num: B6, peripheral: LPUART3, signal: RX, pin_signal: GPIO_EMC_14, software_input_on: Enable, open_drain: Enable}
+  - {pin_num: D6, peripheral: LPUART8, signal: TX, pin_signal: GPIO_EMC_38, software_input_on: Enable, open_drain: Enable}
+  - {pin_num: B7, peripheral: LPUART8, signal: RX, pin_signal: GPIO_EMC_39, software_input_on: Enable, open_drain: Enable}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 
@@ -197,10 +201,14 @@ BOARD_InitUART:
 void BOARD_InitUART(void) {
   CLOCK_EnableClock(kCLOCK_Iomuxc);           
 
-  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_13_LPUART3_TX, 0U); 
-  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_14_LPUART3_RX, 0U); 
-  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_19_LPUART4_TX, 0U); 
-  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_20_LPUART4_RX, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_13_LPUART3_TX, 1U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_14_LPUART3_RX, 1U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_38_LPUART8_TX, 1U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_39_LPUART8_RX, 1U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_EMC_13_LPUART3_TX, 0x18B0U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_EMC_14_LPUART3_RX, 0x18B0U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_EMC_38_LPUART8_TX, 0x18B0U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_EMC_39_LPUART8_RX, 0x18B0U); 
 }
 
 
@@ -209,10 +217,10 @@ void BOARD_InitUART(void) {
 BOARD_InitPWM:
 - options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
 - pin_list:
-  - {pin_num: G2, peripheral: PWM1, signal: 'A, 0', pin_signal: GPIO_EMC_23}
   - {pin_num: D3, peripheral: PWM1, signal: 'B, 0', pin_signal: GPIO_EMC_24}
   - {pin_num: D2, peripheral: PWM1, signal: 'A, 1', pin_signal: GPIO_EMC_25}
   - {pin_num: B3, peripheral: PWM1, signal: 'B, 1', pin_signal: GPIO_EMC_26}
+  - {pin_num: A2, peripheral: PWM1, signal: 'A, 2', pin_signal: GPIO_EMC_27, pull_keeper_select: Keeper}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 
@@ -225,10 +233,11 @@ BOARD_InitPWM:
 void BOARD_InitPWM(void) {
   CLOCK_EnableClock(kCLOCK_Iomuxc);           
 
-  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_23_FLEXPWM1_PWMA00, 0U); 
   IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_24_FLEXPWM1_PWMB00, 0U); 
   IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_25_FLEXPWM1_PWMA01, 0U); 
   IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_26_FLEXPWM1_PWMB01, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_27_FLEXPWM1_PWMA02, 0U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_EMC_27_FLEXPWM1_PWMA02, 0x10B0U); 
 }
 
 /***********************************************************************************************************************

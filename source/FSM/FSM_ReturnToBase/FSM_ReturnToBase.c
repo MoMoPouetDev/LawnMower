@@ -140,7 +140,7 @@ void FSM_ReturnToBase(S_MOWER_FSM_STATE e_FSM_ReturnToBase_State)
 			
 
 		 	break;
-	  	case S_SUP_RETURN_TO_BASE_Wainting_For_Docking :
+	  	case S_SUP_RETURN_TO_BASE_Waiting_For_Docking :
 		  /* Insert init code */
 
 		 	break;

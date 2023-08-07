@@ -16,16 +16,16 @@
 /*--------------------------------------------------------------------------*/
 static uint32_t gArraySlotTask[NB_SLOT_CYCLIC_TASK] =
 {
-      CYCLIC_TASK_ADC_READ_VALUE , // 0
-	  CYCLIC_TASK_LEAVE_DOCK,  // 1
-	  0,  // 2
-	  0,  // 3
-	  0,  // 4
-	  0,  // 5
-	  0,  // 6
-	  0,  // 7
-	  0,  // 8
-	  0,  // 9
+      CYCLIC_TASK_ADC_READ_VALUE , CYCLIC_TASK_READ_START_BUTTON, CYCLIC_TASK_READ_STOP_BUTTON,// 0
+	  CYCLIC_TASK_GPS_ACQUISITION,  // 1
+	  CYCLIC_TASK_ANGLE_READ, CYCLIC_TASK_SENSOR_READ, CYCLIC_TASK_UPDATE_LED, // 2
+	  CYCLIC_TASK_SONAR, CYCLIC_TASK_TILT_PROTECTION, // 3
+	  CYCLIC_TASK_WIRE_DETECTION, CYCLIC_TASK_BUMPER_DETECTION, // 4
+	  CYCLIC_TASK_UPDATE_LED,  // 5
+	  CYCLIC_TASK_BLE_SEND_STATUS,  // 6
+	  CYCLIC_TASK_LEAVE_DOCK,  // 7
+	  CYCLIC_TASK_RUN_MOWER,  // 8
+	  CYCLIC_TASK_WIRE_GUIDING,  // 9
 };
 
 /*--------------------------------------------------------------------------*/

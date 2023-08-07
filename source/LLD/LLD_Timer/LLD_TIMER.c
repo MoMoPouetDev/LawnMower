@@ -39,6 +39,22 @@ typedef enum _gpt_clock_source
     kGPT_ClockSource_Osc      = 5U, /*!< GPT Clock Source from Crystal oscillator.*/
 } gpt_clock_source_t;
 
+/*! @brief List of input capture channel number. */
+typedef enum _gpt_input_capture_channel
+{
+    kGPT_InputCapture_Channel1 = 0U, /*!< GPT Input Capture Channel1.*/
+    kGPT_InputCapture_Channel2 = 1U, /*!< GPT Input Capture Channel2.*/
+} gpt_input_capture_channel_t;
+
+/*! @brief List of input capture operation mode. */
+typedef enum _gpt_input_operation_mode
+{
+    kGPT_InputOperation_Disabled = 0U, /*!< Don't capture.*/
+    kGPT_InputOperation_RiseEdge = 1U, /*!< Capture on rising edge of input pin.*/
+    kGPT_InputOperation_FallEdge = 2U, /*!< Capture on falling edge of input pin.*/
+    kGPT_InputOperation_BothEdge = 3U, /*!< Capture on both edges of input pin.*/
+} gpt_input_operation_mode_t;
+
 /*! @brief List of output compare channel number. */
 typedef enum _gpt_output_compare_channel
 {
@@ -157,6 +173,9 @@ static inline void LLD_TIMER_GPT_SoftwareReset(GPT_Type *base);
 static inline void LLD_TIMER_GPT_StartTimer(GPT_Type *base);
 static inline void LLD_TIMER_GPT_StopTimer(GPT_Type *base);
 static inline uint32_t LLD_TIMER_GPT_GetCurrentTimerCount(GPT_Type *base);
+static inline void LLD_TIMER_GPT_SetInputOperationMode(GPT_Type *base,
+												gpt_input_capture_channel_t channel,
+												gpt_input_operation_mode_t mode);
 static inline void LLD_TIMER_GPT_SetOutputOperationMode(GPT_Type *base,
                                               gpt_output_compare_channel_t channel,
                                               gpt_output_operation_mode_t mode);
@@ -264,6 +283,23 @@ static inline uint32_t LLD_TIMER_GPT_GetCurrentTimerCount(GPT_Type *base)
 }
 
 /*!
+ * @brief Set GPT operation mode of input capture channel.
+ *
+ * @param base GPT peripheral base address.
+ * @param channel GPT capture channel (see @ref gpt_input_capture_channel_t typedef enumeration).
+ * @param mode GPT input capture operation mode (see @ref gpt_input_operation_mode_t typedef enumeration).
+ */
+static inline void LLD_TIMER_GPT_SetInputOperationMode(GPT_Type *base,
+														gpt_input_capture_channel_t channel,
+														gpt_input_operation_mode_t mode)
+{
+    assert(channel <= kGPT_InputCapture_Channel2);
+
+    base->CR =
+        (base->CR & ~(GPT_CR_IM1_MASK << ((uint32_t)channel * 2UL))) | (GPT_CR_IM1(mode) << ((uint32_t)channel * 2UL));
+}
+
+/*!
  * @brief Set GPT operation mode of output compare channel.
  *
  * @param base GPT peripheral base address.
@@ -336,6 +372,13 @@ static inline uint32_t LLD_TIMER_GPT_GetStatusFlags(GPT_Type *base, gpt_status_f
  * @param base GPT peripheral base address.
  * @param flags GPT status flag mask (see @ref gpt_status_flag_t for bit definition).
  */
+void LLD_TIMER_GPT_ClearInputCaptureFlags(typ_Lld_Timer e_Number)
+{
+	uint8_t u8_TimerNumber;
+	u8_TimerNumber = LLD_TIMER_GPT_GetOffset(e_Number);
+	LLD_TIMER_GPT_ClearStatusFlags(ts_lld_timer_gpt_manager[u8_TimerNumber].ps_Base, kGPT_InputCapture1Flag);
+}
+
 static inline void LLD_TIMER_GPT_ClearStatusFlags(GPT_Type *base, gpt_status_flag_t flags)
 {
     base->SR = (uint32_t)flags;
@@ -716,6 +759,56 @@ void PIT_DriverIRQHandler(void)
 	}
 
 	SDK_ISR_EXIT_BARRIER;
+}
+
+/**
+* @brief		TIMER peripheral initialization
+* @param		e_Number : timer number
+* @param		u8_EnableFreeRun mode : freeRun (1) or Restart (0) -> set but not used for PIT Timer
+* @return
+* @details
+**/
+void LLD_TIMER_InitGptInputCapture(typ_Lld_Timer e_Number, lld_timer_transfer_callback_t pf_callback)
+{
+	uint8_t u8_TimerNumber;
+	if(e_Number <= LLD_TIMER_GPT2)
+	{
+		gpt_config_t mTimerConfigStruct;
+		u8_TimerNumber = LLD_TIMER_GPT_GetOffset(e_Number);
+
+		if(e_Number == LLD_TIMER_GPT1)
+		{
+			ts_lld_timer_gpt_manager[u8_TimerNumber].ps_Base = GPT1;
+			ts_lld_timer_gpt_manager[u8_TimerNumber].e_Irq = GPT1_IRQn;
+
+		}
+		else /* if(e_Number == LLD_TIMER_GTP2) */
+		{
+			ts_lld_timer_gpt_manager[u8_TimerNumber].ps_Base = GPT2;
+			ts_lld_timer_gpt_manager[u8_TimerNumber].e_Irq = GPT2_IRQn;
+		}
+
+		mTimerConfigStruct.enableFreeRun = false;
+
+		/* GPT device initialization */
+		LLD_TIMER_GPT_Init(ts_lld_timer_gpt_manager[u8_TimerNumber].ps_Base, &mTimerConfigStruct);
+
+	    /* Setup input capture on a gpt channel */
+		LLD_TIMER_GPT_SetInputOperationMode(ts_lld_timer_gpt_manager[u8_TimerNumber].ps_Base, kGPT_InputCapture_Channel1, kGPT_InputOperation_RiseEdge);
+
+		/* Enable interrupt */
+		LLD_TIMER_GPT_EnableInterrupts(ts_lld_timer_gpt_manager[u8_TimerNumber].ps_Base, kGPT_InputCapture1InterruptEnable);
+
+		/* Set Callback */
+		u8_TimerNumber = LLD_TIMER_GPT_GetOffset(e_Number);
+		ts_lld_timer_gpt_manager[u8_TimerNumber].s_ldd_timer_handle.callback = pf_callback;
+
+		/* Enable interrupt request in the NVIC. */
+		EnableIRQ(ts_lld_timer_gpt_manager[u8_TimerNumber].e_Irq);
+
+		/* Interrupt priority settings in the NVIC. */
+		NVIC_SetPriority(ts_lld_timer_gpt_manager[u8_TimerNumber].e_Irq, 0);
+	}
 }
 
 /**

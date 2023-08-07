@@ -16,7 +16,7 @@
 /*--------------------------------------------------------------------------*/
 /* ... DATATYPES ...                                                        */
 /*--------------------------------------------------------------------------*/
-#define BUFFER_SIZE 80
+#define BUFFER_SIZE 68
 
 typedef enum {
     NMEA_START, //$
@@ -81,5 +81,6 @@ void HAL_GPS_Init(void);
 void HAL_GPS_startGpsAcquisition(void);
 uint8_t HAL_GPS_GetHours(void);
 void HAL_GPS_GetCoordinates(float* pLatitudeCoordinates, float* pLongitudeCoordinates);
+void HAL_GPS_GetStructCoordinates(Coordinates* st_latitude, Coordinates* st_longitude);
 
 #endif /* HAL_HAL_GPS_HAL_GPS_H_ */

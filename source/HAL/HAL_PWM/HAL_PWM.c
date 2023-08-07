@@ -19,14 +19,14 @@
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
-
+void HAL_PWM_Enable(void);
 /*--------------------------------------------------------------------------*/
 /*! ... FUNCTIONS DEFINITIONS    ...                                        */
 /*--------------------------------------------------------------------------*/
 void HAL_PWM_Init()
 {
 	LLD_PWM_Init(MOTOR_LEFT_FORWARD, MOTOR_LEFT_CHANNEL, 1000);
-	LLD_PWM_SetDutyCycle(MOTOR_LEFT_FORWARD, MOTOR_LEFT_CHANNEL, 0); 
+	LLD_PWM_SetDutyCycle(MOTOR_LEFT_FORWARD, MOTOR_LEFT_CHANNEL, 0);
 	LLD_PWM_Enable(MOTOR_LEFT_FORWARD, MOTOR_LEFT_CHANNEL, true);
 	LLD_PWM_Init(MOTOR_LEFT_BACKWARD, MOTOR_LEFT_CHANNEL, 1000);
 	LLD_PWM_SetDutyCycle(MOTOR_LEFT_BACKWARD, MOTOR_LEFT_CHANNEL, 0);
@@ -47,6 +47,8 @@ void HAL_PWM_Stop()
 
 	LLD_PWM_SetDutyCycle(MOTOR_RIGHT_FORWARD, MOTOR_RIGHT_CHANNEL, 0);
 	LLD_PWM_SetDutyCycle(MOTOR_RIGHT_BACKWARD, MOTOR_RIGHT_CHANNEL, 0);
+
+	HAL_PWM_Enable();
 }
 
 void HAL_PWM_Backward(uint8_t u8_speed)
@@ -56,6 +58,8 @@ void HAL_PWM_Backward(uint8_t u8_speed)
 
 	LLD_PWM_SetDutyCycle(MOTOR_RIGHT_FORWARD, MOTOR_RIGHT_CHANNEL, 0);
 	LLD_PWM_SetDutyCycle(MOTOR_RIGHT_BACKWARD, MOTOR_RIGHT_CHANNEL, u8_speed);
+
+	HAL_PWM_Enable();
 }
 
 void HAL_PWM_Forward(uint8_t u8_speedLeft, uint8_t u8_speedRight)
@@ -65,6 +69,8 @@ void HAL_PWM_Forward(uint8_t u8_speedLeft, uint8_t u8_speedRight)
 
 	LLD_PWM_SetDutyCycle(MOTOR_RIGHT_FORWARD, MOTOR_RIGHT_CHANNEL, u8_speedRight);
 	LLD_PWM_SetDutyCycle(MOTOR_RIGHT_BACKWARD, MOTOR_RIGHT_CHANNEL, 0);
+
+	HAL_PWM_Enable();
 }
 
 void HAL_PWM_Right()
@@ -74,6 +80,8 @@ void HAL_PWM_Right()
 
 	LLD_PWM_SetDutyCycle(MOTOR_RIGHT_FORWARD, MOTOR_RIGHT_CHANNEL, 0);
 	LLD_PWM_SetDutyCycle(MOTOR_RIGHT_BACKWARD, MOTOR_RIGHT_CHANNEL, 100);
+
+	HAL_PWM_Enable();
 }
 
 void HAL_PWM_Left()
@@ -83,4 +91,14 @@ void HAL_PWM_Left()
 
 	LLD_PWM_SetDutyCycle(MOTOR_RIGHT_FORWARD, MOTOR_RIGHT_CHANNEL, 100);
 	LLD_PWM_SetDutyCycle(MOTOR_RIGHT_BACKWARD, MOTOR_RIGHT_CHANNEL, 0);
+
+	HAL_PWM_Enable();
+}
+
+void HAL_PWM_Enable()
+{
+	LLD_PWM_Enable(MOTOR_LEFT_FORWARD, MOTOR_LEFT_CHANNEL, true);
+	LLD_PWM_Enable(MOTOR_LEFT_BACKWARD, MOTOR_LEFT_CHANNEL, true);
+	LLD_PWM_Enable(MOTOR_RIGHT_FORWARD, MOTOR_RIGHT_CHANNEL, true);
+	LLD_PWM_Enable(MOTOR_RIGHT_BACKWARD, MOTOR_RIGHT_CHANNEL, true);
 }

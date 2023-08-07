@@ -62,7 +62,7 @@ void HAL_Sonar_Distance()
             break;
         case 2:
             HAL_Sonar_SendPulse(E_LEFT_TRIGGER_SONAR);
-            u8_sonarState = 3;
+            u8_sonarState = 0;
 
             break;
         case 3:
