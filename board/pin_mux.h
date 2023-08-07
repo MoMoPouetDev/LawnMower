@@ -55,7 +55,7 @@ void BOARD_InitI2C(void);
  */
 void BOARD_InitADC(void);
 
-#define BOARD_INITGPIO_IOMUXC_GPR_GPR27_GPIO_MUX2_GPIO_SEL_MASK 0xFFFF003FU /*!< GPIO2 and GPIO7 share same IO MUX function, GPIO_MUX2 selects one GPIO function: affected bits mask */
+#define BOARD_INITGPIO_IOMUXC_GPR_GPR27_GPIO_MUX2_GPIO_SEL_MASK 0xFFFF030FU /*!< GPIO2 and GPIO7 share same IO MUX function, GPIO_MUX2 selects one GPIO function: affected bits mask */
 
 /*!
  * @brief Configures pin routing and optionally pin electrical features.

@@ -11,6 +11,8 @@
 #include <stdint.h>
 
 void HAL_I2C_Init(void);
+void HAL_I2C_CompassInit(void);
+void HAL_I2C_AccelInit(void);
 void HAL_I2C_Write(void);
 uint8_t HAL_I2C_Read(uint8_t* , uint8_t* );
 uint8_t HAL_I2C_ReadAccel(uint8_t* pu8_RxBuff, uint8_t* pu8_Size);

@@ -16,8 +16,19 @@
 /*--------------------------------------------------------------------------*/
 /* ... DATATYPES ...                                                        */
 /*--------------------------------------------------------------------------*/
+#define UART_STATUS_TX_IDLE		1302
+#define UART_STATUS_RX_IDLE		1303
+
+uint8_t gau8_uart_txBuff[8];
+uint8_t gau8_uart_rxBuff[8];
+volatile bool rxBufferEmpty            = true;
+volatile bool txBufferFull             = false;
+volatile bool txOnGoing                = false;
+volatile bool rxOnGoing                = false;
+
 static volatile uint8_t gu8_FlagUartGps;
-static volatile uint8_t gu8_FlagUartBle;
+static volatile uint8_t gu8_FlagUartBleTx;
+static volatile uint8_t gu8_FlagUartBleRx;
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
@@ -31,26 +42,28 @@ static volatile uint8_t gu8_FlagUartBle;
 * @return		void
 * @details
 **/
-void HAL_UART_Callback(typ_Lld_Uart e_Uart)
+void HAL_UART_Callback(LPUART_Type *base, lld_uart_handle_t *handle, status_t status, void *userData)
 {
-	if(e_Uart == UART_GPS)
+	if (UART_STATUS_TX_IDLE == status)
 	{
-		gu8_FlagUartGps = 1;
-	}
-	if(e_Uart == UART_BLE)
-	{
-		gu8_FlagUartBle = 1;
+		gu8_FlagUartBleTx = 1;
 	}
 
+	if (UART_STATUS_RX_IDLE == status)
+	{
+		gu8_FlagUartGps = 1;
+		gu8_FlagUartBleRx = 1;
+	}
 }
 
 void HAL_UART_Init()
 {
 	gu8_FlagUartGps = 0;
-	gu8_FlagUartBle = 0;
+	gu8_FlagUartBleTx = 0;
+	gu8_FlagUartBleRx = 0;
 
-	LLD_UART_Init(UART_GPS, UART_BAUDRATE, HAL_UART_Callback);
-	LLD_UART_Init(UART_BLE, UART_BAUDRATE, HAL_UART_Callback);
+	LLD_UART_Init(UART_GPS, GPS_BAUDRATE, HAL_UART_Callback);
+	LLD_UART_Init(UART_BLE, BLE_BAUDRATE, HAL_UART_Callback);
 }
 
 void HAL_UART_BleInit()
@@ -62,17 +75,58 @@ void HAL_UART_BleInit()
 		commandName[] = "AT+NAMEMower";
 
 	LLD_UART_Send(UART_BLE, commandAT, 2);
+	while(!gu8_FlagUartBleTx);
+	gu8_FlagUartBleTx = 0;
+	LLD_UART_Send(UART_BLE, commandRole, 8);
+	while(!gu8_FlagUartBleTx);
+	gu8_FlagUartBleTx = 0;
+	LLD_UART_Send(UART_BLE, commandUuid, 13);
+	while(!gu8_FlagUartBleTx);
+	gu8_FlagUartBleTx = 0;
+	LLD_UART_Send(UART_BLE, commandChar, 13);
+	while(!gu8_FlagUartBleTx);
+	gu8_FlagUartBleTx = 0;
+	LLD_UART_Send(UART_BLE, commandName, 12);
+	while(!gu8_FlagUartBleTx);
+	gu8_FlagUartBleTx = 0;
 }
 
-uint8_t HAL_UART_ReceptionGPS(char* tu8_RxBuffer, uint8_t u8_size) 
+void HAL_UART_Reception()
+{
+	static uint8_t tu8_uart_rxBuff[1] = {0};
+	static uint8_t u8_uartState = 0;
+
+	switch (u8_uartState)
+	{
+	case 0:
+		LLD_UART_Receive(UART_BLE, tu8_uart_rxBuff, 1);
+		u8_uartState = 1;
+		break;
+	case 1:
+		if (gu8_FlagUartBleRx == 1)
+		{
+			gu8_FlagUartBleRx = 0;
+
+			u8_uartState = 0;
+		}
+		break;
+
+	default:
+		u8_uartState = 0;
+		break;
+	}
+}
+
+uint8_t HAL_UART_ReceptionGPS(char* tu8_RxBuffer, uint8_t u8_size)
 {	
+	static uint8_t tu8_uart_rxBuff[BUFFER_SIZE] = {0};
 	static uint8_t u8_uartState = 0;
 	uint8_t u8_returnValue = 0;
 
 	switch (u8_uartState)
 	{
 	case 0:
-		LLD_UART_Receive(UART_GPS, tu8_RxBuffer, 1);
+		LLD_UART_Receive(UART_GPS, tu8_uart_rxBuff, BUFFER_SIZE);
 		u8_uartState = 1;
 		break;
 	case 1:
@@ -80,23 +134,17 @@ uint8_t HAL_UART_ReceptionGPS(char* tu8_RxBuffer, uint8_t u8_size)
 		{
 			gu8_FlagUartGps = 0;
 
-			if (tu8_RxBuffer[0] == '$')
+			if ( tu8_uart_rxBuff[0] == '$' &&
+				tu8_uart_rxBuff[1] == 'G' && 
+				tu8_uart_rxBuff[3] == 'R' &&
+				tu8_uart_rxBuff[4] == 'M' &&
+				tu8_uart_rxBuff[5] == 'C' )
 			{
-				LLD_UART_Receive(UART_GPS, tu8_RxBuffer, u8_size);
-				u8_uartState = 2;
+				u8_returnValue = 1;
+				memcpy(tu8_RxBuffer, tu8_uart_rxBuff, BUFFER_SIZE);
 			}
-			else
-			{
-				u8_uartState = 0;
-			}
-		}
-		break;
-	case 2:
-		if (gu8_FlagUartGps == 1)
-		{
-			gu8_FlagUartGps = 0;
+
 			u8_uartState = 0;
-			u8_returnValue = 1;
 		}
 		break;
 	
@@ -107,82 +155,53 @@ uint8_t HAL_UART_ReceptionGPS(char* tu8_RxBuffer, uint8_t u8_size)
 
 	return u8_returnValue;
 }
-void HAL_UART_SendStatus() {
-	Coordinates tLatitude;
-	Coordinates tLongitude;
-	uint8_t uHoursGPS;
-	uint8_t uMinutesGPS;
-	uint8_t uDaysGPS;
-	uint8_t uMonthsGPS;
-	uint8_t angleLSB, angleMSB;
-	uint16_t angleW;
-	float angle;
+void HAL_UART_SendStatus(uint8_t* tu8_uart_txBuff, uint8_t u8_size)
+{
+	static uint8_t u8_uartState = 0;
 
-	
-	//angle = MOWER_getAngleFromNorth();
-	angleW = (uint16_t) angle;
-	angleLSB = angleW & 0xFF;
-	angleMSB = (angleW >> 8) & 0xFF;
-	
-	//LLD_UART_Send(UART_BLE, );
-	/*
-    UART_transmission(_eEtatMower);
-    UART_transmission(_eErrorMower);
-    UART_transmission(_uBattery);
-	
-	UART_transmission(tLatitude.degrees);
-	UART_transmission(tLatitude.minutes);
-	UART_transmission(tLatitude.decimalMSB);
-	UART_transmission(tLatitude.decimalB);
-	UART_transmission(tLatitude.decimalLSB);
-	
-	UART_transmission(tLongitude.degrees);
-	UART_transmission(tLongitude.minutes);
-	UART_transmission(tLongitude.decimalMSB);
-	UART_transmission(tLongitude.decimalB);
-	UART_transmission(tLongitude.decimalLSB);
-	
-	UART_transmission(uHoursGPS);
-	UART_transmission(uMinutesGPS);
-	UART_transmission(uDaysGPS);
-	UART_transmission(uMonthsGPS);
-	
-	UART_transmission(angleMSB);
-	UART_transmission(angleLSB);
-	*/
+	switch (u8_uartState)
+	{
+		case 0:
+			LLD_UART_Send(UART_BLE, tu8_uart_txBuff, u8_size);
+			u8_uartState = 1;
+			break;
+		case 1:
+			if (gu8_FlagUartBleTx == 1)
+			{
+				gu8_FlagUartBleTx = 0;
+				u8_uartState = 0;
+			}
+			break;
+		default:
+			u8_uartState = 0;
+			break;
+	}
 }
 
-void HAL_UART_ReceivedStatus() {
-    //LLD_UART_Receive(UART_BLE, );
-	/*
-	_eCommandMower = UDR0;
-    
-    switch(_eCommandMower) {
-        case START:
-            _uBpStop = 0;
-            _uBpStart ^= (1<<1);
-            break;
-            
-        case STOP:
-            _uBpStop = 1;
-            if((_eEtatRain == ON) && (isDocking()))
-                _eEtatRain = OFF;
-            break;
-            
-        case FORCE_START:
-            _uBpForceStart = 1;
-            break;
-			
-		case DOCK_ON:
-			_uDock = 1;
+uint8_t HAL_UART_ReceptionBLE(uint8_t* tu8_RxBuffer, uint8_t u8_size)
+{
+	static uint8_t tu8_uart_rxBuff[1] = {0};
+	static uint8_t u8_uartState = 0;
+	uint8_t u8_returnValue = 0;
+
+	switch (u8_uartState)
+	{
+		case 0:
+			LLD_UART_Receive(UART_BLE, tu8_uart_rxBuff, 1);
+			u8_uartState = 1;
 			break;
-			
-		case DOCK_OFF:
-			_uDock = 0;
+		case 1:
+			if (gu8_FlagUartBleRx == 1)
+			{
+				gu8_FlagUartBleRx = 0;
+				u8_uartState = 0;
+				u8_returnValue = 1;
+				memcpy(tu8_RxBuffer, tu8_uart_rxBuff, BUFFER_SIZE);
+			}
 			break;
-            
-        default:
-            break;
-    }
-	*/
+		default:
+			u8_uartState = 0;
+			break;
+	}
+	return u8_returnValue;
 }

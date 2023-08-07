@@ -17,7 +17,8 @@
 /*--------------------------------------------------------------------------*/
 /* ... DATATYPES ...                                                        */
 /*--------------------------------------------------------------------------*/
-volatile uint8_t u8_flagPit;
+volatile uint8_t gu8_flagPit;
+volatile uint8_t gu8_flagGpt;
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
@@ -27,7 +28,13 @@ volatile uint8_t u8_flagPit;
 /*--------------------------------------------------------------------------*/
 void HAL_Timer_PitHandler()
 {
-    u8_flagPit = 1;
+    gu8_flagPit = 1;
+}
+
+void HAL_Timer_GptHandler()
+{
+	LLD_TIMER_GPT_ClearInputCaptureFlags(LLD_TIMER_GPT1);
+	gu8_flagGpt = 1;
 }
 
 void HAL_Timer_Init()
@@ -50,23 +57,24 @@ void HAL_Timer_Init()
 
     LLD_TIMER_Init(LLD_TIMER_GPT1, 1);
     LLD_TIMER_Start(LLD_TIMER_GPT1);
+
+    gu8_flagPit = 0;
+    gu8_flagGpt = 0;
 }
 
 void HAL_TIMER_StartSonarPulse()
 {
     LLD_TIMER_Start(LLD_TIMER_PIT3);
-    while (!u8_flagPit);
+    while (!gu8_flagPit);
     LLD_TIMER_Stop(LLD_TIMER_PIT3);
-    u8_flagPit = 0;
+    gu8_flagPit = 0;
 }
 
 uint32_t HAL_TIMER_ReadGptValue()
 {
-    uint32_t u8_gptValue;
+    uint32_t u32_gptValue;
 
-    LLD_TIMER_Stop(LLD_TIMER_GPT1);
-    LLD_TIMER_GPT_Read(LLD_TIMER_GPT1, &u8_gptValue);
-    LLD_TIMER_Start(LLD_TIMER_GPT1);
+    LLD_TIMER_GPT_Read(LLD_TIMER_GPT1, &u32_gptValue);
 
-    return u8_gptValue;
+    return u32_gptValue;
 }

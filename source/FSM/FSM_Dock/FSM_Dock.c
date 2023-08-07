@@ -35,7 +35,7 @@ void FSM_Dock_DisableAllMotor(void);
 void FSM_Dock_Init()
 {
 	gu8_isCharging = 0;
-	gu8_isCharging = 0;
+	gu8_leavingDockState = 0;
 }
 
 void FSM_Dock(S_MOWER_FSM_STATE e_FSM_Dock_State)
@@ -61,6 +61,10 @@ void FSM_Dock(S_MOWER_FSM_STATE e_FSM_Dock_State)
 			{
 				FSM_Enum_SetFsmPhase(S_SUP_DOCK_In_Charge);
 			}
+			else if (RUN_Sensors_GetDockState() == OFF)
+			{
+				FSM_Enum_SetFsmPhase(S_SUP_OPERATIVE_Init);
+			}
 			else
 			{
 				FSM_Enum_SetFsmPhase(S_SUP_DOCK_Waiting_For_Mow);
@@ -76,9 +80,11 @@ void FSM_Dock(S_MOWER_FSM_STATE e_FSM_Dock_State)
 			{
 				FSM_Enum_SetFsmPhase(S_SUP_DOCK_Waiting_For_Mow);
 			}
+			else
+			{
+				RUN_GPIO_SetEtatMowerInCharge();
+			}
 			
-			RUN_GPIO_SetEtatMowerInCharge();
-
 		 	break;
 		case S_SUP_DOCK_Waiting_For_Mow :
 			if ( (RUN_Sensors_IsTimeToMow() == 1) && (RUN_Sensors_GetRainState() == OFF) )
@@ -110,7 +116,7 @@ void FSM_Dock(S_MOWER_FSM_STATE e_FSM_Dock_State)
 void FSM_Dock_LeavingDockCharger(uint32_t u32_CyclicTask)
 {
 	if ( (u32_CyclicTask & CYCLIC_TASK_LEAVE_DOCK) != 0) {
-		gu8_isCharging = RUN_Mower_LeaveDockCharger();
+		gu8_leavingDockState = RUN_Mower_LeaveDockCharger();
 
 		RUN_Task_EraseCyclicTask(CYCLIC_TASK_ADC_READ_VALUE);
 	}

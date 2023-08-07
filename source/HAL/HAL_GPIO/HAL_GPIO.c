@@ -18,12 +18,12 @@
 /*--------------------------------------------------------------------------*/
 /* ... DATATYPES ...                                                        */
 /*--------------------------------------------------------------------------*/
-EtatMower eEtatMower;
-ErrorMower eErrorMower;
+EtatMower geEtatMower;
+ErrorMower geErrorMower;
 
 volatile uint8_t gu8_flagEcho;
-volatile uint8_t gu8_risingEdgeGptValue;
-volatile uint8_t gu8_fallingEdgeGptValue;
+volatile uint32_t gu32_risingEdgeGptValue;
+volatile uint32_t gu32_fallingEdgeGptValue;
 
 volatile uint8_t gu8_flagStartButton;
 volatile uint8_t gu8_flagStopButton;
@@ -42,12 +42,12 @@ void HAL_GPIO_LeftEchoHandler(void)
 {	
 	if (gu8_flagEcho == 0)
 	{
-		gu8_risingEdgeGptValue = HAL_TIMER_ReadGptValue();
+		gu32_risingEdgeGptValue = HAL_TIMER_ReadGptValue();
 		gu8_flagEcho = 1;
 	}
 	else if (gu8_flagEcho == 1)
 	{
-		gu8_risingEdgeGptValue = HAL_TIMER_ReadGptValue();
+		gu32_fallingEdgeGptValue = HAL_TIMER_ReadGptValue();
 		gu8_flagEcho = 2;
 	}
 	
@@ -57,12 +57,12 @@ void HAL_GPIO_CenterEchoHandler(void)
 {
 	if (gu8_flagEcho == 0)
 	{
-		gu8_risingEdgeGptValue = HAL_TIMER_ReadGptValue();
+		gu32_risingEdgeGptValue = HAL_TIMER_ReadGptValue();
 		gu8_flagEcho = 1;
 	}
 	else if (gu8_flagEcho == 1)
 	{
-		gu8_risingEdgeGptValue = HAL_TIMER_ReadGptValue();
+		gu32_fallingEdgeGptValue = HAL_TIMER_ReadGptValue();
 		gu8_flagEcho = 2;
 	}
 }
@@ -71,12 +71,12 @@ void HAL_GPIO_RightEchoHandler(void)
 {
 	if (gu8_flagEcho == 0)
 	{
-		gu8_risingEdgeGptValue = HAL_TIMER_ReadGptValue();
+		gu32_risingEdgeGptValue = HAL_TIMER_ReadGptValue();
 		gu8_flagEcho = 1;
 	}
 	else if (gu8_flagEcho == 1)
 	{
-		gu8_risingEdgeGptValue = HAL_TIMER_ReadGptValue();
+		gu32_fallingEdgeGptValue = HAL_TIMER_ReadGptValue();
 		gu8_flagEcho = 2;
 	}
 }
@@ -117,15 +117,20 @@ void HAL_GPIO_Init()
 
 	LLD_GPIO_SetCallback(E_STOP_BUTTON, HAL_GPIO_StopButtonHandler);
 	LLD_GPIO_Init(E_STOP_BUTTON, GPIO2, E_STOP_BUTTON_PIN, LLD_GPIO_INT_RISING_EDGE, LLD_GPIO_INPUT, 0);
+	LLD_GPIO_EnableIt(E_STOP_BUTTON, true);
 	LLD_GPIO_SetCallback(E_START_BUTTON, HAL_GPIO_StartButtonHandler);
 	LLD_GPIO_Init(E_START_BUTTON, GPIO2, E_START_BUTTON_PIN, LLD_GPIO_INT_RISING_EDGE, LLD_GPIO_INPUT, 0);
+	LLD_GPIO_EnableIt(E_START_BUTTON, true);
 
 	LLD_GPIO_SetCallback(E_LEFT_BUMPER, HAL_GPIO_LeftBumperHandler);
 	LLD_GPIO_Init(E_LEFT_BUMPER, GPIO2, E_LEFT_BUMPER_PIN, LLD_GPIO_INT_RISING_EDGE, LLD_GPIO_INPUT, 0);
+	LLD_GPIO_EnableIt(E_LEFT_BUMPER, true);
 	LLD_GPIO_SetCallback(E_CENTER_BUMPER, HAL_GPIO_CenterBumperHandler);
 	LLD_GPIO_Init(E_CENTER_BUMPER, GPIO2, E_CENTER_BUMPER_PIN, LLD_GPIO_INT_RISING_EDGE, LLD_GPIO_INPUT, 0);
+	LLD_GPIO_EnableIt(E_CENTER_BUMPER, true);
 	LLD_GPIO_SetCallback(E_RIGHT_BUMPER, HAL_GPIO_RightBumperHandler);
 	LLD_GPIO_Init(E_RIGHT_BUMPER, GPIO2, E_RIGHT_BUMPER_PIN, LLD_GPIO_INT_RISING_EDGE, LLD_GPIO_INPUT, 0);
+	LLD_GPIO_EnableIt(E_RIGHT_BUMPER, true);
 
 	LLD_GPIO_Init(E_MOTOR_BLADE_ENABLE, GPIO2, E_CENTER_BUMPER_PIN, LLD_GPIO_NO_INT_MODE, LLD_GPIO_OUTPUT, 0);
 	LLD_GPIO_Init(E_MOTOR_ONE_FORWARD_ENABLE, GPIO2, E_MOTOR_ONE_FORWARD_ENABLE_PIN, LLD_GPIO_NO_INT_MODE, LLD_GPIO_OUTPUT, 0);
@@ -135,21 +140,24 @@ void HAL_GPIO_Init()
 
 	LLD_GPIO_SetCallback(E_LEFT_ECHO_SONAR, HAL_GPIO_LeftEchoHandler);
 	LLD_GPIO_Init(E_LEFT_ECHO_SONAR, GPIO2, E_LEFT_ECHO_SONAR_PIN, LLD_GPIO_INT_RISING_OR_FALLING_EDGE, LLD_GPIO_INPUT, 0);
+	LLD_GPIO_EnableIt(E_LEFT_ECHO_SONAR, true);
 	LLD_GPIO_SetCallback(E_CENTER_ECHO_SONAR, HAL_GPIO_CenterEchoHandler);
 	LLD_GPIO_Init(E_CENTER_ECHO_SONAR, GPIO2, E_CENTER_ECHO_SONAR_PIN, LLD_GPIO_INT_RISING_OR_FALLING_EDGE, LLD_GPIO_INPUT, 0);
+	LLD_GPIO_EnableIt(E_CENTER_ECHO_SONAR, true);
 	LLD_GPIO_SetCallback(E_RIGHT_ECHO_SONAR, HAL_GPIO_RightEchoHandler);
 	LLD_GPIO_Init(E_RIGHT_ECHO_SONAR, GPIO2, E_RIGHT_ECHO_SONAR_PIN, LLD_GPIO_INT_RISING_OR_FALLING_EDGE, LLD_GPIO_INPUT, 0);
+	LLD_GPIO_EnableIt(E_RIGHT_ECHO_SONAR, true);
 
 	LLD_GPIO_Init(E_LEFT_TRIGGER_SONAR, GPIO2, E_LEFT_TRIGGER_SONAR_PIN, LLD_GPIO_NO_INT_MODE, LLD_GPIO_OUTPUT, 0);
 	LLD_GPIO_Init(E_CENTER_TRIGGER_SONAR, GPIO2, E_CENTER_TRIGGER_SONAR_PIN, LLD_GPIO_NO_INT_MODE, LLD_GPIO_OUTPUT, 0);
 	LLD_GPIO_Init(E_RIGHT_TRIGGER_SONAR, GPIO2, E_RIGHT_TRIGGER_SONAR_PIN, LLD_GPIO_NO_INT_MODE, LLD_GPIO_OUTPUT, 0);
 
-	eEtatMower = UNKNOWN_ETAT;
-	eErrorMower = NTR;
+	geEtatMower = UNKNOWN_ETAT;
+	geErrorMower = NTR;
 
 	gu8_flagEcho = 0;
-	gu8_risingEdgeGptValue = 0;
-	gu8_fallingEdgeGptValue = 0;
+	gu32_risingEdgeGptValue = 0;
+	gu32_fallingEdgeGptValue = 0;
 
 	gu8_flagStartButton = 0;
 	gu8_flagStopButton = 0;
@@ -159,8 +167,9 @@ void HAL_GPIO_Init()
  	gu8_flagRightBumper = 0;
 }
 
-void HAL_GPIO_UpdateLed() {
-    switch(eEtatMower) {
+void HAL_GPIO_UpdateLed() 
+{
+    switch(geEtatMower) {
         case UNKNOWN_ETAT:
 			LLD_GPIO_ClearPin(E_GREEN_LED);
 			LLD_GPIO_ClearPin(E_ORANGE_LED);
@@ -204,7 +213,7 @@ void HAL_GPIO_UpdateLed() {
             break;
     }
     
-    switch(eErrorMower) {
+    switch(geErrorMower) {
         case NTR:
 			LLD_GPIO_ClearPin(E_YELLOW_ONE_LED);
 			LLD_GPIO_ClearPin(E_YELLOW_TWO_LED);
@@ -257,12 +266,22 @@ void HAL_GPIO_UpdateLed() {
 
 void HAL_GPIO_SetEtatMower(EtatMower _eEtatMower)
 {
-	eEtatMower = _eEtatMower;
+	geEtatMower = _eEtatMower;
 }
 
 void HAL_GPIO_SetErrorMower(ErrorMower _eErrorMower)
 {
-	eErrorMower = _eErrorMower;
+	geErrorMower = _eErrorMower;
+}
+
+EtatMower HAL_GPIO_GetEtatMower()
+{
+	return geEtatMower;
+}
+
+ErrorMower HAL_GPIO_GetErrorMower()
+{
+	return geErrorMower;
 }
 
 void HAL_GPIO_WritePinSonar(uint8_t u8_sonarID, uint8_t u8_pinValue)
@@ -284,11 +303,12 @@ uint8_t HAL_GPIO_GetEchoState()
 
 uint32_t HAL_GPIO_GetTimerValue()
 {
-	uint8_t u8_returnValue = 0;
+	uint32_t u32_returnValue = 0;
 
-    u8_returnValue = gu8_fallingEdgeGptValue - gu8_risingEdgeGptValue;
+    u32_returnValue = gu32_fallingEdgeGptValue - gu32_risingEdgeGptValue;
+    gu8_flagEcho = 0;
 
-    return u8_returnValue;
+    return u32_returnValue;
 }
 
 void HAL_GPIO_UpdateBladeState(Etat e_bladeState)

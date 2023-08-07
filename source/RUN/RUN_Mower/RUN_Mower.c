@@ -41,9 +41,9 @@
 #define COORDINATES_BASE_LONG 1.2470619
 
 uint8_t gu8_deltaAngle;
-static uint8_t gu8_distanceSonarFC;
-static uint8_t gu8_distanceSonarFL;
-static uint8_t gu8_distanceSonarFR;
+static uint8_t gu8_distanceFC;
+static uint8_t gu8_distanceFL;
+static uint8_t gu8_distanceFR;
 static uint16_t gu16_distanceWireLeft;
 static uint16_t gu16_distanceWireRight;
 static double gd_pitch;
@@ -60,9 +60,9 @@ static uint16_t gu16_azimut;
 void RUN_Mower_Init()
 {
 	gu8_deltaAngle = DELTA_ANGLE;
-	gu8_distanceSonarFC = 255;
-  	gu8_distanceSonarFL = 255;
-  	gu8_distanceSonarFR = 255;
+	gu8_distanceFC = 255;
+  	gu8_distanceFL = 255;
+  	gu8_distanceFR = 255;
   	gu16_distanceWireLeft = WIRE_DETECTION_UNLOAD;
   	gu16_distanceWireRight = WIRE_DETECTION_UNLOAD;
 	gd_pitch = 0;
@@ -140,7 +140,7 @@ void RUN_Mower_GetAngles()
 	static uint8_t _u8_rxBuffCompassSize = 0;
 	static uint8_t _tu8_rxBuffAccel[6] = {0};
 	static uint8_t _u8_rxBuffAccelSize = 0;
-	static uint8_t _u8_getAngleState = 0;
+	static uint8_t _u8_getAngleState = 1;
 	uint8_t u8_flagI2c = 0;
 
 	switch (_u8_getAngleState)
@@ -511,8 +511,8 @@ uint8_t RUN_Mower_RunMower()
 	uint8_t u8_rightBumperState = 0;
 	uint8_t u8_returnValue = 0;
 
-	HAL_Sonar_GetDistance(&gu8_distanceSonarFC, &gu8_distanceSonarFL, &gu8_distanceSonarFR);
-	HAL_FIFO_GetSonarAverage(&gu8_distanceSonarFC, &gu8_distanceSonarFL, &gu8_distanceSonarFR);
+	HAL_Sonar_GetDistance(&gu8_distanceFC, &gu8_distanceFL, &gu8_distanceFR);
+	HAL_FIFO_GetSonarAverage(&gu8_distanceFC, &gu8_distanceFL, &gu8_distanceFR);
 
 	gu16_distanceWireLeft = HAL_ADC_GetLeftWireValue();
 	gu16_distanceWireRight = HAL_ADC_GetRightWireValue();
@@ -529,7 +529,7 @@ uint8_t RUN_Mower_RunMower()
 	{
 		u8_returnValue = 2;
 	}
-	else if ((gu8_distanceSonarFC < SONAR_WARN) || (gu8_distanceSonarFL < SONAR_WARN) || (gu8_distanceSonarFR < SONAR_WARN))
+	else if ((gu8_distanceFC < SONAR_WARN) || (gu8_distanceFL < SONAR_WARN) || (gu8_distanceFR < SONAR_WARN))
 	{
 		RUN_PWM_Forward(MIDDLE_SPEED, MIDDLE_SPEED);
 	}
@@ -580,4 +580,9 @@ uint8_t RUN_Mower_WireGuiding()
 	}
 
 	return u8_returnValue;	
+}
+
+uint16_t RUN_Mower_GetCurrentAngle()
+{
+	return gu16_currentAngle;
 }
