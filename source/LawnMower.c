@@ -37,7 +37,8 @@
 #include "peripherals.h"
 #include "pin_mux.h"
 #include "clock_config.h"
-#include "MIMXRT1061.h"
+#include "MIMXRT1062.h"
+#include "MIMXRT1062_features.h"
 
 #include "FSM_Main.h"
 /* TODO: insert other include files here. */

@@ -10,7 +10,6 @@
 /*! ... INCLUDES ...                                                        */
 /*--------------------------------------------------------------------------*/
 #include <stdint.h>
-#include "MIMXRT1061.h"
 #include "HAL_Timer.h"
 #include "HAL_GPIO.h"
 #include "LLD_GPIO.h"

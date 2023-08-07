@@ -15,8 +15,8 @@
 #include <stdbool.h>
 #include <assert.h>
 
-#include "MIMXRT1061.h"
-#include "MIMXRT1061_features.h"
+#include "MIMXRT1062.h"
+#include "MIMXRT1062_features.h"
 #include "fsl_clock.h"
 #include "LLD_PWM.h"
 

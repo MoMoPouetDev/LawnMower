@@ -13,8 +13,6 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "MIMXRT1061.h"
-#include "MIMXRT1061_features.h"
 #include "fsl_clock.h"
 #include "LLD_UART.h"
 
