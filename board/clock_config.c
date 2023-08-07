@@ -15,11 +15,11 @@
 
 /* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!GlobalInfo
-product: Clocks v11.0
-processor: MIMXRT1061xxxxA
-package_id: MIMXRT1061CVL5A
+product: Clocks v12.0
+processor: MIMXRT1062xxxxA
+package_id: MIMXRT1062CVL5A
 mcu_data: ksdk2_0
-processor_version: 13.0.2
+processor_version: 14.0.1
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 
 #include "clock_config.h"
@@ -54,6 +54,7 @@ outputs:
 - {id: CKIL_SYNC_CLK_ROOT.outFreq, value: 32.768 kHz}
 - {id: CLK_1M.outFreq, value: 1 MHz}
 - {id: CLK_24M.outFreq, value: 24 MHz}
+- {id: CSI_CLK_ROOT.outFreq, value: 12 MHz}
 - {id: ENET2_125M_CLK.outFreq, value: 1.2 MHz, locked: true, accuracy: '0.001'}
 - {id: ENET_125M_CLK.outFreq, value: 2.4 MHz, locked: true, accuracy: '0.001'}
 - {id: ENET_25M_REF_CLK.outFreq, value: 1.2 MHz, locked: true, accuracy: '0.001'}
@@ -64,6 +65,7 @@ outputs:
 - {id: GPT1_ipg_clk_highfreq.outFreq, value: 66 MHz}
 - {id: GPT2_ipg_clk_highfreq.outFreq, value: 66 MHz}
 - {id: IPG_CLK_ROOT.outFreq, value: 132 MHz, locked: true, accuracy: '0.001'}
+- {id: LCDIF_CLK_ROOT.outFreq, value: 40 MHz}
 - {id: LPI2C_CLK_ROOT.outFreq, value: 60 MHz, locked: true, accuracy: '0.001'}
 - {id: LPSPI_CLK_ROOT.outFreq, value: 64 MHz, locked: true, accuracy: '0.001'}
 - {id: LVDS1_CLK.outFreq, value: 1.056 GHz}
@@ -268,6 +270,12 @@ void BOARD_BootClockRUN(void)
     CLOCK_SetDiv(kCLOCK_Flexspi2Div, 7);
     /* Set Flexspi2 clock source. */
     CLOCK_SetMux(kCLOCK_Flexspi2Mux, 0);
+    /* Disable CSI clock gate. */
+    CLOCK_DisableClock(kCLOCK_Csi);
+    /* Set CSI_PODF. */
+    CLOCK_SetDiv(kCLOCK_CsiDiv, 1);
+    /* Set Csi clock source. */
+    CLOCK_SetMux(kCLOCK_CsiMux, 0);
     /* Disable LPSPI clock gate. */
     CLOCK_DisableClock(kCLOCK_Lpspi1);
     CLOCK_DisableClock(kCLOCK_Lpspi2);
@@ -339,6 +347,14 @@ void BOARD_BootClockRUN(void)
     CLOCK_SetDiv(kCLOCK_UartDiv, 0);
     /* Set Uart clock source. */
     CLOCK_SetMux(kCLOCK_UartMux, 0);
+    /* Disable LCDIF clock gate. */
+    CLOCK_DisableClock(kCLOCK_LcdPixel);
+    /* Set LCDIF_PRED. */
+    CLOCK_SetDiv(kCLOCK_LcdifPreDiv, 1);
+    /* Set LCDIF_CLK_PODF. */
+    CLOCK_SetDiv(kCLOCK_LcdifDiv, 3);
+    /* Set Lcdif pre clock source. */
+    CLOCK_SetMux(kCLOCK_LcdifPreMux, 5);
     /* Disable SPDIF clock gate. */
     CLOCK_DisableClock(kCLOCK_Spdif);
     /* Set SPDIF0_CLK_PRED. */

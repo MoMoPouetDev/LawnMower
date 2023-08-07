@@ -6,11 +6,11 @@
 /*
  * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!GlobalInfo
-product: Pins v13.0
-processor: MIMXRT1061xxxxA
-package_id: MIMXRT1061CVL5A
+product: Pins v14.0
+processor: MIMXRT1062xxxxA
+package_id: MIMXRT1062CVL5A
 mcu_data: ksdk2_0
-processor_version: 13.0.2
+processor_version: 14.0.1
 external_user_signals: {}
 pin_labels:
 - {pin_num: M11, pin_signal: GPIO_AD_B0_02, label: 'USB_OTG1_PWR/J24[2]', identifier: SW_RIGHT}

@@ -9,7 +9,8 @@
 /*! ... INCLUDES ...                                                        */
 /*--------------------------------------------------------------------------*/
 #include <stdint.h>
-#include "MIMXRT1061.h"
+#include "MIMXRT1062.h"
+#include "MIMXRT1062_features.h"
 
 #include "HAL_ADC.h"
 #include "LLD_ADC.h"
