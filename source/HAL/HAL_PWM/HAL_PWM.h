@@ -19,20 +19,15 @@
 /*--------------------------------------------------------------------------*/
 #define MOTOR_LEFT_CHANNEL  LLD_PWM_CHANNEL_A
 #define MOTOR_LEFT_FORWARD LLD_PWM_PWM1_MODULE1
-#define MOTOR_LEFT_BACKWARD LLD_PWM_PWM1_MODULE2
 #define MOTOR_RIGHT_CHANNEL  LLD_PWM_CHANNEL_B
 #define MOTOR_RIGHT_FORWARD LLD_PWM_PWM1_MODULE0
-#define MOTOR_RIGHT_BACKWARD LLD_PWM_PWM1_MODULE1
 
 /*--------------------------------------------------------------------------*/
 /*! ... LOCAL FUNCTIONS DECLARATIONS ...                                    */
 /*--------------------------------------------------------------------------*/
 void HAL_PWM_Init(void);
 void HAL_PWM_Stop(void);
-void HAL_PWM_Backward(uint8_t u8_speed);
 void HAL_PWM_Forward(uint8_t u8_speedLeft, uint8_t u8_speedRight);
-void HAL_PWM_Left(void);
-void HAL_PWM_Right(void);
-
+void HAL_PWM_Turn(void);
 
 #endif /* HAL_HAL_PWM_HAL_PWM_H_ */

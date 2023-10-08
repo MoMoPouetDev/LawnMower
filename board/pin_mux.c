@@ -219,8 +219,6 @@ BOARD_InitPWM:
 - pin_list:
   - {pin_num: D3, peripheral: PWM1, signal: 'B, 0', pin_signal: GPIO_EMC_24}
   - {pin_num: D2, peripheral: PWM1, signal: 'A, 1', pin_signal: GPIO_EMC_25}
-  - {pin_num: B3, peripheral: PWM1, signal: 'B, 1', pin_signal: GPIO_EMC_26}
-  - {pin_num: A2, peripheral: PWM1, signal: 'A, 2', pin_signal: GPIO_EMC_27, pull_keeper_select: Keeper}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 
@@ -235,9 +233,6 @@ void BOARD_InitPWM(void) {
 
   IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_24_FLEXPWM1_PWMB00, 0U); 
   IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_25_FLEXPWM1_PWMA01, 0U); 
-  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_26_FLEXPWM1_PWMB01, 0U); 
-  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_27_FLEXPWM1_PWMA02, 0U); 
-  IOMUXC_SetPinConfig(IOMUXC_GPIO_EMC_27_FLEXPWM1_PWMA02, 0x10B0U); 
 }
 
 /***********************************************************************************************************************
