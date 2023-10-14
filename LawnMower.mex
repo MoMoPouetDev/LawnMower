@@ -259,12 +259,6 @@
                <pins>
                   <pin peripheral="PWM1" signal="B, 0" pin_num="D3" pin_signal="GPIO_EMC_24"/>
                   <pin peripheral="PWM1" signal="A, 1" pin_num="D2" pin_signal="GPIO_EMC_25"/>
-                  <pin peripheral="PWM1" signal="B, 1" pin_num="B3" pin_signal="GPIO_EMC_26"/>
-                  <pin peripheral="PWM1" signal="A, 2" pin_num="A2" pin_signal="GPIO_EMC_27">
-                     <pin_features>
-                        <pin_feature name="pull_keeper_select" value="Keeper"/>
-                     </pin_features>
-                  </pin>
                </pins>
             </function>
          </functions_list>
