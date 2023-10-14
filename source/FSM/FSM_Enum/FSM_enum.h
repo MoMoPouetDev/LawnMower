@@ -1,8 +1,9 @@
 #ifndef _FSM_ENUM_H_
 #define _FSM_ENUM_H_
 
-#define PHASE_DOCK_INIT                                             0x00
-#define PHASE_DOCK_WAITING_FOR_LEAVING_DOCK                                  0x0F   //15
+#define PHASE_INIT_INIT                                             0x00
+#define PHASE_DOCK_INIT                                             0x01
+#define PHASE_DOCK_WAITING_FOR_LEAVING_DOCK                         0x0F   //15
 
 #define PHASE_OPERATIVE_INIT                                        0x10   //16
 #define PHASE_OPERATIVE_WAITING_FOR_RETURN_TO_BASE                  0x1F   //31
@@ -16,6 +17,8 @@
 /* DECLARATION DES ETATS DU MODULE SUPERVISOR */
  typedef enum
  {
+     S_SUP_INIT_Init                                = PHASE_INIT_INIT,
+
      S_SUP_DOCK_Init                                = PHASE_DOCK_INIT,
      S_SUP_DOCK_In_Charge                           = S_SUP_DOCK_Init + 1U,
      S_SUP_DOCK_Waiting_For_Mow                     = S_SUP_DOCK_In_Charge + 1U,
