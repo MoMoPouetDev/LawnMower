@@ -18,6 +18,7 @@
 #include "RUN_Task_Interface.h"
 
 #include "FSM_Enum.h"
+#include "FSM_Init.h"
 #include "FSM_Dock.h"
 #include "FSM_Operative.h"
 #include "FSM_ReturnToBase.h"
@@ -53,6 +54,7 @@ void FSM_Main_Init( void )
 {
 	/*** FSM Init ***/
 	ge_FSM_Phase = FSM_Enum_GetFsmPhase();
+	FSM_Init_Init();
 	FSM_Dock_Init();
 	FSM_Operative_Init();
 	FSM_ReturnToBase_Init();
@@ -88,8 +90,11 @@ void FSM_Main( void )
 	  /*                                   FINITE STATE MACHINE                                                      */
 	  /***************************************************************************************************************/
 
-
-		if ( (ge_FSM_Phase >= PHASE_DOCK_INIT) && (ge_FSM_Phase <= PHASE_DOCK_WAITING_FOR_LEAVING_DOCK))
+		if (ge_FSM_Phase == PHASE_INIT_INIT)
+		{
+			FSM_Init( ge_FSM_Phase );
+		}
+		else if ( (ge_FSM_Phase >= PHASE_DOCK_INIT) && (ge_FSM_Phase <= PHASE_DOCK_WAITING_FOR_LEAVING_DOCK))
 		{
 			FSM_Dock( ge_FSM_Phase );
 		}
