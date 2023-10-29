@@ -80,31 +80,6 @@ void HAL_GPIO_RightEchoHandler(void)
 	}
 }
 
-void HAL_GPIO_StopButtonHandler(void)
-{
-	gu8_flagStopButton = 1;
-}
-
-void HAL_GPIO_StartButtonHandler(void)
-{
-	gu8_flagStartButton = 1;
-}
-
-void HAL_GPIO_LeftBumperHandler(void)
-{
-	gu8_flagLeftBumper = 1;
-}
-
-void HAL_GPIO_CenterBumperHandler(void)
-{
-	gu8_flagCenterBumper = 1;
-}
-
-void HAL_GPIO_RightBumperHandler(void)
-{
-	gu8_flagRightBumper = 1;
-}
-
 void HAL_GPIO_Init()
 {
 	LLD_GPIO_Init(E_GREEN_LED, GPIO2, E_GREEN_LED_PIN, LLD_GPIO_NO_INT_MODE, LLD_GPIO_OUTPUT, 0);
@@ -114,22 +89,12 @@ void HAL_GPIO_Init()
 	LLD_GPIO_Init(E_YELLOW_TWO_LED, GPIO2, E_YELLOW_TWO_LED_PIN, LLD_GPIO_NO_INT_MODE, LLD_GPIO_OUTPUT, 0);
 	LLD_GPIO_Init(E_YELLOW_THREE_LED, GPIO2, E_YELLOW_THREE_LED_PIN, LLD_GPIO_NO_INT_MODE, LLD_GPIO_OUTPUT, 0);
 
-	LLD_GPIO_SetCallback(E_STOP_BUTTON, HAL_GPIO_StopButtonHandler);
-	LLD_GPIO_Init(E_STOP_BUTTON, GPIO2, E_STOP_BUTTON_PIN, LLD_GPIO_INT_RISING_EDGE, LLD_GPIO_INPUT, 0);
-	LLD_GPIO_EnableIt(E_STOP_BUTTON, true);
-	LLD_GPIO_SetCallback(E_START_BUTTON, HAL_GPIO_StartButtonHandler);
-	LLD_GPIO_Init(E_START_BUTTON, GPIO2, E_START_BUTTON_PIN, LLD_GPIO_INT_RISING_EDGE, LLD_GPIO_INPUT, 0);
-	LLD_GPIO_EnableIt(E_START_BUTTON, true);
+	LLD_GPIO_Init(E_STOP_BUTTON, GPIO2, E_STOP_BUTTON_PIN, LLD_GPIO_NO_INT_MODE, LLD_GPIO_INPUT, 0);
+	LLD_GPIO_Init(E_START_BUTTON, GPIO2, E_START_BUTTON_PIN, LLD_GPIO_NO_INT_MODE, LLD_GPIO_INPUT, 0);
 
-	LLD_GPIO_SetCallback(E_LEFT_BUMPER, HAL_GPIO_LeftBumperHandler);
-	LLD_GPIO_Init(E_LEFT_BUMPER, GPIO2, E_LEFT_BUMPER_PIN, LLD_GPIO_INT_RISING_EDGE, LLD_GPIO_INPUT, 0);
-	LLD_GPIO_EnableIt(E_LEFT_BUMPER, true);
-	LLD_GPIO_SetCallback(E_CENTER_BUMPER, HAL_GPIO_CenterBumperHandler);
-	LLD_GPIO_Init(E_CENTER_BUMPER, GPIO2, E_CENTER_BUMPER_PIN, LLD_GPIO_INT_RISING_EDGE, LLD_GPIO_INPUT, 0);
-	LLD_GPIO_EnableIt(E_CENTER_BUMPER, true);
-	LLD_GPIO_SetCallback(E_RIGHT_BUMPER, HAL_GPIO_RightBumperHandler);
-	LLD_GPIO_Init(E_RIGHT_BUMPER, GPIO2, E_RIGHT_BUMPER_PIN, LLD_GPIO_INT_RISING_EDGE, LLD_GPIO_INPUT, 0);
-	LLD_GPIO_EnableIt(E_RIGHT_BUMPER, true);
+	LLD_GPIO_Init(E_LEFT_BUMPER, GPIO2, E_LEFT_BUMPER_PIN, LLD_GPIO_NO_INT_MODE, LLD_GPIO_INPUT, 0);
+	LLD_GPIO_Init(E_CENTER_BUMPER, GPIO2, E_CENTER_BUMPER_PIN, LLD_GPIO_NO_INT_MODE, LLD_GPIO_INPUT, 0);
+	LLD_GPIO_Init(E_RIGHT_BUMPER, GPIO2, E_RIGHT_BUMPER_PIN, LLD_GPIO_NO_INT_MODE, LLD_GPIO_INPUT, 0);
 
 	LLD_GPIO_Init(E_MOTOR_BLADE_ENABLE, GPIO2, E_CENTER_BUMPER_PIN, LLD_GPIO_NO_INT_MODE, LLD_GPIO_OUTPUT, 0);
 	LLD_GPIO_Init(E_MOTOR_ONE_FORWARD_ENABLE, GPIO2, E_MOTOR_ONE_FORWARD_ENABLE_PIN, LLD_GPIO_NO_INT_MODE, LLD_GPIO_OUTPUT, 0);
@@ -360,44 +325,6 @@ void HAL_GPIO_UpdateWheelState(MotorState e_wheelState)
 	}
 }
 
-void HAL_GPIO_ClearFlagButton(GPIO e_flagButton)
-{
-	switch (e_flagButton)
-	{
-		case E_STOP_BUTTON :
-			gu8_flagStopButton = 0;
-			break;
-
-		case E_START_BUTTON :
-			gu8_flagStartButton = 0;
-			break;
-		
-		default:
-			break;
-	}
-}
-
-void HAL_GPIO_ClearFlagBumper(GPIO e_flagBumper)
-{
-	switch (e_flagBumper)
-	{
-		case E_LEFT_BUMPER :
-			gu8_flagLeftBumper = 0;
-			break;
-
-		case E_CENTER_BUMPER :
-			gu8_flagCenterBumper = 0;
-			break;
-		
-		case E_RIGHT_BUMPER :
-			gu8_flagRightBumper = 0;
-			break;
-
-		default:
-			break;
-	}
-}
-
 uint8_t HAL_GPIO_GetFlagButton(GPIO e_flagButton)
 {
 	uint8_t u8_flagButton = 0;
@@ -405,13 +332,19 @@ uint8_t HAL_GPIO_GetFlagButton(GPIO e_flagButton)
 	switch (e_flagButton)
 	{
 		case E_STOP_BUTTON :
-			u8_flagButton = gu8_flagStopButton;
-			gu8_flagStopButton = 0;
+			gu8_flagStopButton = LLD_GPIO_ReadPin(E_STOP_BUTTON);
+			if (gu8_flagStopButton == 0)
+			{
+				u8_flagButton = 1;
+			}
 			break;
 
 		case E_START_BUTTON :
-			u8_flagButton = gu8_flagStartButton;
-			gu8_flagStartButton = 0;
+			gu8_flagStartButton = LLD_GPIO_ReadPin(E_START_BUTTON);
+			if (gu8_flagStartButton == 0)
+			{
+				u8_flagButton = 1;
+			}
 			break;
 		
 		default:
@@ -427,18 +360,27 @@ uint8_t HAL_GPIO_GetFlagBumper(GPIO e_flagBumper)
 	switch (e_flagBumper)
 	{
 		case E_LEFT_BUMPER :
-			u8_flagBumper = gu8_flagLeftBumper;
-			gu8_flagLeftBumper = 0;
+			gu8_flagLeftBumper = LLD_GPIO_ReadPin(E_LEFT_BUMPER);
+			if (gu8_flagLeftBumper == 0)
+			{
+				u8_flagBumper = 1;
+			}
 			break;
 
 		case E_CENTER_BUMPER :
-			u8_flagBumper = gu8_flagCenterBumper;
-			gu8_flagCenterBumper = 0;
+			gu8_flagCenterBumper = LLD_GPIO_ReadPin(E_CENTER_BUMPER);
+			if (gu8_flagCenterBumper == 0)
+			{
+				u8_flagBumper = 1;
+			}
 			break;
 		
 		case E_RIGHT_BUMPER :
-			u8_flagBumper = gu8_flagRightBumper;
-			gu8_flagRightBumper = 0;
+			gu8_flagRightBumper = LLD_GPIO_ReadPin(E_RIGHT_BUMPER);
+			if (gu8_flagRightBumper == 0)
+			{
+				u8_flagBumper = 1;
+			}
 			break;
 
 		default:

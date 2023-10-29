@@ -15,6 +15,7 @@
         "hal_sonar.h": "c",
         "run_gpio.h": "c",
         "run_task_interface.h": "c",
-        "hal_gps.h": "c"
+        "hal_gps.h": "c",
+        "run_task.h": "c"
     }
 }
