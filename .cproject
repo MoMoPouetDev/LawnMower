@@ -906,4 +906,5 @@
 		<core>cm7</core>
 		<coreId>core0_MIMXRT1062xxxxA</coreId>
 	</storageModule>
+	<storageModule moduleId="openCmsis"/>
 </cproject>
