@@ -87,11 +87,11 @@ void BOARD_InitI2C(void) {
 BOARD_InitADC:
 - options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
 - pin_list:
-  - {pin_num: H13, peripheral: ADC1, signal: 'IN, 13', pin_signal: GPIO_AD_B1_08}
-  - {pin_num: L12, peripheral: ADC2, signal: 'IN, 9', pin_signal: GPIO_AD_B1_04}
-  - {pin_num: K12, peripheral: ADC2, signal: 'IN, 10', pin_signal: GPIO_AD_B1_05}
-  - {pin_num: K10, peripheral: ADC1, signal: 'IN, 12', pin_signal: GPIO_AD_B1_07}
-  - {pin_num: J12, peripheral: ADC2, signal: 'IN, 11', pin_signal: GPIO_AD_B1_06}
+  - {pin_num: H13, peripheral: ADC1, signal: 'IN, 13', pin_signal: GPIO_AD_B1_08, pull_up_down_config: Pull_Down_100K_Ohm, pull_keeper_select: Pull, drive_strength: R0_3}
+  - {pin_num: L12, peripheral: ADC2, signal: 'IN, 9', pin_signal: GPIO_AD_B1_04, pull_keeper_select: Pull, drive_strength: R0_3}
+  - {pin_num: K12, peripheral: ADC2, signal: 'IN, 10', pin_signal: GPIO_AD_B1_05, pull_keeper_select: Pull, drive_strength: R0_3}
+  - {pin_num: K10, peripheral: ADC1, signal: 'IN, 12', pin_signal: GPIO_AD_B1_07, pull_keeper_select: Pull, drive_strength: R0_3}
+  - {pin_num: J12, peripheral: ADC2, signal: 'IN, 11', pin_signal: GPIO_AD_B1_06, pull_keeper_select: Pull, drive_strength: R0_3}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 
@@ -109,6 +109,11 @@ void BOARD_InitADC(void) {
   IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_06_GPIO1_IO22, 0U); 
   IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_07_GPIO1_IO23, 0U); 
   IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_08_GPIO1_IO24, 0U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_04_GPIO1_IO20, 0x3098U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_05_GPIO1_IO21, 0x3098U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_06_GPIO1_IO22, 0x3098U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_07_GPIO1_IO23, 0x3098U); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_08_GPIO1_IO24, 0x3098U); 
 }
 
 

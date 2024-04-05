@@ -125,11 +125,37 @@
                   </dependency>
                </dependencies>
                <pins>
-                  <pin peripheral="ADC1" signal="IN, 13" pin_num="H13" pin_signal="GPIO_AD_B1_08"/>
-                  <pin peripheral="ADC2" signal="IN, 9" pin_num="L12" pin_signal="GPIO_AD_B1_04"/>
-                  <pin peripheral="ADC2" signal="IN, 10" pin_num="K12" pin_signal="GPIO_AD_B1_05"/>
-                  <pin peripheral="ADC1" signal="IN, 12" pin_num="K10" pin_signal="GPIO_AD_B1_07"/>
-                  <pin peripheral="ADC2" signal="IN, 11" pin_num="J12" pin_signal="GPIO_AD_B1_06"/>
+                  <pin peripheral="ADC1" signal="IN, 13" pin_num="H13" pin_signal="GPIO_AD_B1_08">
+                     <pin_features>
+                        <pin_feature name="pull_up_down_config" value="Pull_Down_100K_Ohm"/>
+                        <pin_feature name="pull_keeper_select" value="Pull"/>
+                        <pin_feature name="drive_strength" value="R0_3"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="ADC2" signal="IN, 9" pin_num="L12" pin_signal="GPIO_AD_B1_04">
+                     <pin_features>
+                        <pin_feature name="pull_keeper_select" value="Pull"/>
+                        <pin_feature name="drive_strength" value="R0_3"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="ADC2" signal="IN, 10" pin_num="K12" pin_signal="GPIO_AD_B1_05">
+                     <pin_features>
+                        <pin_feature name="pull_keeper_select" value="Pull"/>
+                        <pin_feature name="drive_strength" value="R0_3"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="ADC1" signal="IN, 12" pin_num="K10" pin_signal="GPIO_AD_B1_07">
+                     <pin_features>
+                        <pin_feature name="pull_keeper_select" value="Pull"/>
+                        <pin_feature name="drive_strength" value="R0_3"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="ADC2" signal="IN, 11" pin_num="J12" pin_signal="GPIO_AD_B1_06">
+                     <pin_features>
+                        <pin_feature name="pull_keeper_select" value="Pull"/>
+                        <pin_feature name="drive_strength" value="R0_3"/>
+                     </pin_features>
+                  </pin>
                </pins>
             </function>
             <function name="BOARD_InitGPIO">

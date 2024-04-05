@@ -97,7 +97,7 @@ void FSM_Operative(S_MOWER_FSM_STATE e_FSM_Operative_State)
 			RUN_GPIO_SetEtatMowerInTask();
 			RUN_GPIO_SetErrorMowerNtr();
 
-			if (gs8_charge == 1)
+			if (gs8_charge == 0)
 			{
 				FSM_Enum_SetFsmPhase(S_SUP_OPERATIVE_Waiting_For_Return_To_Base);
 			}
