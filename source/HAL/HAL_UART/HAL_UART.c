@@ -119,37 +119,63 @@ void HAL_UART_Reception()
 
 uint8_t HAL_UART_ReceptionGPS(char* tu8_RxBuffer, uint8_t u8_size)
 {	
-	static uint8_t tu8_uart_rxBuff[BUFFER_SIZE] = {0};
-	static uint8_t u8_uartState = 0;
+	static uint8_t _tu8_uart_rxBuff[BUFFER_SIZE_MAX] = {0};
+	static uint8_t _tu8_rxBuff[BUFFER_SIZE] = {0};
+	static uint8_t _u8_uartState = 0;
+	uint8_t u8_flagNMEA = 0;
+	uint8_t u8_ind = 0;
 	uint8_t u8_returnValue = 0;
 
-	switch (u8_uartState)
+	switch (_u8_uartState)
 	{
 	case 0:
-		LLD_UART_Receive(UART_GPS, tu8_uart_rxBuff, BUFFER_SIZE);
-		u8_uartState = 1;
+		LLD_UART_Receive(UART_GPS, _tu8_uart_rxBuff, BUFFER_SIZE_MAX);
+		_u8_uartState = 1;
 		break;
 	case 1:
 		if (gu8_FlagUartGps == 1)
 		{
 			gu8_FlagUartGps = 0;
 
-			if ( tu8_uart_rxBuff[0] == '$' &&
-				tu8_uart_rxBuff[1] == 'G' && 
-				tu8_uart_rxBuff[3] == 'R' &&
-				tu8_uart_rxBuff[4] == 'M' &&
-				tu8_uart_rxBuff[5] == 'C' )
+			for (size_t i = 0; i < BUFFER_SIZE_MAX; i++)
 			{
-				u8_returnValue = 1;
-				memcpy(tu8_RxBuffer, tu8_uart_rxBuff, BUFFER_SIZE);
+				if( _tu8_uart_rxBuff[i] == '$' )
+				{
+					_tu8_rxBuff[0] = _tu8_uart_rxBuff[i];
+					u8_ind = i;
+					u8_flagNMEA = 1;
+				}
+				else if( (u8_flagNMEA == 1) && (_tu8_uart_rxBuff[i] != '\n') )
+				{
+					_tu8_rxBuff[(i - u8_ind)] = _tu8_uart_rxBuff[i];
+				}
+				else if( _tu8_uart_rxBuff[i] == '\n')
+				{
+					_tu8_rxBuff[(i - u8_ind)] = _tu8_uart_rxBuff[i];
+					u8_flagNMEA = 2;
+					break;
+				}
+			}
+			
+			if (u8_flagNMEA == 2)
+			{
+				if ( _tu8_rxBuff[0] == '$' &&
+					_tu8_rxBuff[1] == 'G' && 
+					_tu8_rxBuff[3] == 'R' &&
+					_tu8_rxBuff[4] == 'M' &&
+					_tu8_rxBuff[5] == 'C' )
+				{
+					u8_returnValue = 1;
+					memcpy(tu8_RxBuffer, _tu8_rxBuff, BUFFER_SIZE);
+				}
 			}
 
-			u8_uartState = 0;
+			_u8_uartState = 0;
 		}
 		break;
 	
 	default:
-		u8_uartState = 0;
+		_u8_uartState = 0;
 		break;
 	}
 

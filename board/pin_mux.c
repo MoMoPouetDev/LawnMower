@@ -6,11 +6,11 @@
 /*
  * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!GlobalInfo
-product: Pins v14.0
+product: Pins v12.0
 processor: MIMXRT1062xxxxA
 package_id: MIMXRT1062CVL5A
 mcu_data: ksdk2_0
-processor_version: 14.0.1
+processor_version: 12.0.1
 external_user_signals: {}
 pin_labels:
 - {pin_num: M11, pin_signal: GPIO_AD_B0_02, label: 'USB_OTG1_PWR/J24[2]', identifier: SW_RIGHT}
@@ -125,9 +125,12 @@ BOARD_InitGPIO:
   - {pin_num: A11, peripheral: GPIO2, signal: 'gpio_io, 16', pin_signal: GPIO_B1_00, pull_up_down_config: Pull_Up_100K_Ohm, pull_keeper_select: Pull, open_drain: Disable,
     speed: MHZ_100, drive_strength: R0_3, slew_rate: Slow}
   - {pin_num: B11, peripheral: GPIO2, signal: 'gpio_io, 17', pin_signal: GPIO_B1_01, pull_up_down_config: Pull_Up_100K_Ohm, pull_keeper_select: Pull, drive_strength: R0_3}
-  - {pin_num: C11, peripheral: GPIO2, signal: 'gpio_io, 18', pin_signal: GPIO_B1_02, pull_up_down_config: Pull_Up_100K_Ohm, pull_keeper_select: Pull, drive_strength: R0_3}
-  - {pin_num: D11, peripheral: GPIO2, signal: 'gpio_io, 19', pin_signal: GPIO_B1_03, pull_up_down_config: Pull_Up_100K_Ohm, pull_keeper_select: Pull, drive_strength: R0_3}
-  - {pin_num: E12, peripheral: GPIO2, signal: 'gpio_io, 20', pin_signal: GPIO_B1_04, pull_up_down_config: Pull_Up_100K_Ohm, pull_keeper_select: Pull, drive_strength: R0_3}
+  - {pin_num: C11, peripheral: GPIO2, signal: 'gpio_io, 18', pin_signal: GPIO_B1_02, software_input_on: Disable, pull_up_down_config: Pull_Up_100K_Ohm, pull_keeper_select: Pull,
+    drive_strength: R0_3}
+  - {pin_num: D11, peripheral: GPIO2, signal: 'gpio_io, 19', pin_signal: GPIO_B1_03, software_input_on: Disable, pull_up_down_config: Pull_Up_100K_Ohm, pull_keeper_select: Pull,
+    drive_strength: R0_3}
+  - {pin_num: E12, peripheral: GPIO2, signal: 'gpio_io, 20', pin_signal: GPIO_B1_04, software_input_on: Disable, pull_up_down_config: Pull_Up_100K_Ohm, pull_keeper_select: Pull,
+    drive_strength: R0_3}
   - {pin_num: D12, peripheral: GPIO2, signal: 'gpio_io, 21', pin_signal: GPIO_B1_05}
   - {pin_num: C12, peripheral: GPIO2, signal: 'gpio_io, 22', pin_signal: GPIO_B1_06}
   - {pin_num: B12, peripheral: GPIO2, signal: 'gpio_io, 23', pin_signal: GPIO_B1_07}
