@@ -70,6 +70,7 @@ void FSM_ReturnToBase(S_MOWER_FSM_STATE e_FSM_ReturnToBase_State)
 		default:
 	  	case S_SUP_RETURN_TO_BASE_Init:
 			FSM_ReturnToBase_Init();
+			RUN_GPIO_UpdateBladeState(ON);
 			FSM_Enum_SetFsmPhase(S_SUP_RETURN_TO_BASE_Angle_To_Base);
 
 			break;
