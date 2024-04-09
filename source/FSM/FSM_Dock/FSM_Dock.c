@@ -56,7 +56,8 @@ void FSM_Dock(S_MOWER_FSM_STATE e_FSM_Dock_State)
 	  	case S_SUP_DOCK_Init:
 			FSM_Dock_Init();
 			FSM_Dock_DisableAllMotor();
-
+			RUN_GPIO_UpdateBladeState(OFF);
+			
 			if (RUN_Sensors_IsCharging() == 1)
 			{
 				FSM_Enum_SetFsmPhase(S_SUP_DOCK_In_Charge);

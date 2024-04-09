@@ -124,6 +124,7 @@ void HAL_GPIO_WritePinSonar(uint8_t u8_sonarID, uint8_t u8_pinValue);
 uint8_t HAL_GPIO_GetEchoState(void);
 uint32_t HAL_GPIO_GetTimerValue(void);
 void HAL_GPIO_UpdateBladeState(Etat e_bladeState);
+void HAL_GPIO_BladeState(Etat e_bladeState);
 void HAL_GPIO_UpdateWheelState(MotorState e_wheelState);
 uint8_t HAL_GPIO_GetFlagButton(GPIO e_flagButton);
 uint8_t HAL_GPIO_GetFlagBumper(GPIO e_flagBumper);

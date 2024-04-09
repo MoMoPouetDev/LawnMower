@@ -50,7 +50,8 @@ void FSM_Init(S_MOWER_FSM_STATE e_FSM_Init_State)
 	  	case S_SUP_INIT_Init:
 			FSM_Init_Init();
 			FSM_Init_GetFlagStartButton(u32_CyclicTask);
-
+			RUN_GPIO_UpdateBladeState(OFF);
+			
 			if (gu8_startButtonState)
 			{
 				FSM_Enum_SetFsmPhase(S_SUP_DOCK_Init);

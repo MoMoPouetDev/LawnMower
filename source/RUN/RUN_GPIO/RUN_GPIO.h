@@ -18,6 +18,7 @@
 void RUN_GPIO_Init(void);
 void RUN_GPIO_DisableAllMotor(void);
 void RUN_GPIO_DisableMotor(void);
+void RUN_GPIO_UpdateBladeState(Etat e_bladeState);
 void RUN_GPIO_SetEtatMowerInCharge(void);
 void RUN_GPIO_SetEtatMowerWaitingForMow(void);
 void RUN_GPIO_SetEtatMowerInTask(void);

@@ -19,6 +19,7 @@
 /*--------------------------------------------------------------------------*/
 EtatMower geEtatMower;
 ErrorMower geErrorMower;
+Etat ge_bladeState;
 
 volatile uint8_t gu8_flagEcho;
 volatile uint32_t gu32_risingEdgeGptValue;
@@ -118,6 +119,7 @@ void HAL_GPIO_Init()
 
 	geEtatMower = UNKNOWN_ETAT;
 	geErrorMower = NTR;
+	ge_bladeState = OFF;
 
 	gu8_flagEcho = 0;
 	gu32_risingEdgeGptValue = 0;
@@ -277,9 +279,22 @@ uint32_t HAL_GPIO_GetTimerValue()
 
 void HAL_GPIO_UpdateBladeState(Etat e_bladeState)
 {
-	switch(e_bladeState) {
+	ge_bladeState = e_bladeState;
+}
+
+void HAL_GPIO_BladeState(Etat e_bladeState)
+{
+	switch(e_bladeState) 
+	{
 		case ON:
-			LLD_GPIO_WritePin(E_MOTOR_BLADE_ENABLE);
+			if(ge_bladeState == ON)
+			{
+				LLD_GPIO_WritePin(E_MOTOR_BLADE_ENABLE);
+			}
+			else
+			{
+				LLD_GPIO_ClearPin(E_MOTOR_BLADE_ENABLE);
+			}
 			break;
 		default:
 		case OFF:
