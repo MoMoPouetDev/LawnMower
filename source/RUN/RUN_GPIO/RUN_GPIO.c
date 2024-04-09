@@ -39,6 +39,11 @@ void RUN_GPIO_DisableMotor()
 	HAL_GPIO_UpdateWheelState(STOP);
 }
 
+void RUN_GPIO_UpdateBladeState(Etat e_bladeState)
+{
+	HAL_GPIO_BladeState(e_bladeState);
+}
+
 void RUN_GPIO_SetEtatMowerInCharge()
 {
 	HAL_GPIO_SetEtatMower(EN_CHARGE);

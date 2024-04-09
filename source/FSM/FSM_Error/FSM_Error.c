@@ -42,7 +42,7 @@ void FSM_Error(S_MOWER_FSM_STATE e_FSM_Error_State)
 	  	default:
 	  	case S_SUP_ERROR_Init:
 		 /* Insert init code */
-
+			RUN_GPIO_UpdateBladeState(OFF);
 			break;
 	  	case S_SUP_ERROR_Waiting_For_User_Decision :
 		  /* Insert init code */
